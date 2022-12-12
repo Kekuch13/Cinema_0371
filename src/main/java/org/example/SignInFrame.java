@@ -5,17 +5,17 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class MyFrame extends JFrame implements ActionListener {
+public class SignInFrame extends JFrame implements ActionListener {
     JPasswordField password;
     JTextField username;
-    JLabel label_password, label_username, message, title;
-    JButton btn, reset_btn;
+    JLabel labelPassword, labelUsername, message, title;
+    JButton btn, resetBtn;
     JCheckBox showPassword;
 
-    MyFrame () {
+    SignInFrame() {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(800, 600);
-        this.setTitle("CinemaXD");
+        this.setTitle("Cinema_0371");
         this.setLocationRelativeTo(null);
         this.setLayout(null);
 
@@ -24,15 +24,15 @@ public class MyFrame extends JFrame implements ActionListener {
         title.setFont(new Font("Arial", Font.BOLD, 20));
         title.setForeground(Color.black);
 
-        label_username = new JLabel("Логин");
-        label_username.setBounds(200, 150, 100, 40);
-        label_username.setFont(new Font("Arial", Font.BOLD, 20));
-        label_username.setForeground(Color.black);
+        labelUsername = new JLabel("Логин");
+        labelUsername.setBounds(200, 150, 100, 40);
+        labelUsername.setFont(new Font("Arial", Font.BOLD, 20));
+        labelUsername.setForeground(Color.black);
 
-        label_password = new JLabel("Пароль");
-        label_password.setBounds(200, 200, 100, 40);
-        label_password.setFont(new Font("Arial", Font.BOLD, 20));
-        label_password.setForeground(Color.black);
+        labelPassword = new JLabel("Пароль");
+        labelPassword.setBounds(200, 200, 100, 40);
+        labelPassword.setFont(new Font("Arial", Font.BOLD, 20));
+        labelPassword.setForeground(Color.black);
 
         message = new JLabel();
         message.setBounds(300, 350, 300, 40);
@@ -62,20 +62,20 @@ public class MyFrame extends JFrame implements ActionListener {
         btn.setForeground(Color.black);
         btn.addActionListener(this);
 
-        reset_btn = new JButton("Сброс");
-        reset_btn.setBounds(500, 300, 100, 40);
-        reset_btn.setFont(new Font("Arial", Font.BOLD, 16));
-        reset_btn.setBackground(Color.red);
-        reset_btn.setForeground(Color.black);
-        reset_btn.addActionListener(this);
+        resetBtn = new JButton("Сброс");
+        resetBtn.setBounds(500, 300, 100, 40);
+        resetBtn.setFont(new Font("Arial", Font.BOLD, 16));
+        resetBtn.setBackground(Color.red);
+        resetBtn.setForeground(Color.black);
+        resetBtn.addActionListener(this);
 
         this.add(title);
-        this.add(label_username);
-        this.add(label_password);
+        this.add(labelUsername);
+        this.add(labelPassword);
         this.add(username);
         this.add(password);
         this.add(btn);
-        this.add(reset_btn);
+        this.add(resetBtn);
         this.add(showPassword);
         this.add(message);
 
@@ -89,7 +89,7 @@ public class MyFrame extends JFrame implements ActionListener {
             String msg = "Успешный вход";
             message.setText(msg);
         }
-        if(evt.getSource() == reset_btn) {
+        if(evt.getSource() == resetBtn) {
             username.setText("");
             password.setText("");
         }
