@@ -1,7 +1,5 @@
 package Client;
 
-import com.thoughtworks.xstream.io.json.JsonWriter;
-
 import javax.swing.*;
 import java.net.*;
 import java.io.*;
