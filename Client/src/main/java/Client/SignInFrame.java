@@ -1,5 +1,8 @@
 package Client;
 
+import com.google.gson.Gson;
+import forms.AuthenticationForm;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -12,6 +15,7 @@ public class SignInFrame extends JFrame implements ActionListener {
     JButton btn, resetBtn;
     JCheckBox showPassword;
     ClientConnection Conn;
+    AuthenticationForm authForm;
 
     SignInFrame() {
         Conn = ClientConnection.instance;
@@ -88,10 +92,18 @@ public class SignInFrame extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent evt) {
         if(evt.getSource() == btn) {
+            //проверка на пустые поля и длину строки
+
+            authForm = new AuthenticationForm(username.getText(), String.valueOf(password.getPassword()));
+            Gson gson = new Gson();
+            String json = gson.toJson(authForm);
             String name = username.getText();
-            Conn.send(name+"\n");
+            Conn.send(json+"\n");
+
             JOptionPane.showMessageDialog(this, "Успешный вход");
+
             String msg = "Успешный вход";
+
             message.setText(msg);
         }
         if(evt.getSource() == resetBtn) {

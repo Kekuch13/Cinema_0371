@@ -1,5 +1,8 @@
 package Server;
 
+import com.google.gson.Gson;
+import forms.AuthenticationForm;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -73,6 +76,13 @@ public class Server {
 
             // close connection
             socket.close();
+
+            Gson foo = new Gson();
+            AuthenticationForm auth = foo.fromJson(line, AuthenticationForm.class);
+            System.out.println(auth.getForm());
+            System.out.println(auth.login);
+            System.out.println(auth.password);
+
         } catch(IOException i) {
             System.out.println(i);
         }
