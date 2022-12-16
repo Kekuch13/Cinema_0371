@@ -114,7 +114,7 @@ public class SignInFrame extends JFrame implements ActionListener {
             if(showPassword.isSelected()) {
                 password.setEchoChar((char) 0);
             } else {
-                password.setEchoChar('*');
+                password.setEchoChar('•');
             }
         }
     }
