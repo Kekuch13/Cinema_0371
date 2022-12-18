@@ -50,9 +50,4 @@ public class DatabaseManager {
     public DSLContext getContext() {
         return context;
     }
-
-    public static void main(String[] args) {
-        new DatabaseManager();
-    }
-
 }
