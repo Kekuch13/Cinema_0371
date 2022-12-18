@@ -92,14 +92,16 @@ public class SignInFrame extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent evt) {
         if(evt.getSource() == btn) {
-            //проверка на пустые поля и длину строки
+            //добавить проверку на пустые поля и длину строки
 
-            authForm = new AuthenticationForm(username.getText(), String.valueOf(password.getPassword()));
+            authForm = new AuthenticationForm(username.getText(), String.valueOf(password.getPassword()), false);
+            System.out.println(authForm);
             Gson gson = new Gson();
             String json = gson.toJson(authForm);
             String name = username.getText();
             Conn.send(json+"\n");
-
+            authForm = gson.fromJson(Conn.receive(), AuthenticationForm.class);
+            System.out.println(authForm);
             JOptionPane.showMessageDialog(this, "Успешный вход");
 
             String msg = "Успешный вход";

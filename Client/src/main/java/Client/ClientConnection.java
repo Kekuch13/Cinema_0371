@@ -1,45 +1,35 @@
 package Client;
 
 import javax.xml.crypto.Data;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Date;
 
 public class ClientConnection {
-    // We initialize our socket( tunnel )
-    // and our input reader and output stream
-    // we will take the input from the user
-    // and send it to the socket using output stream
     private Socket socket;
-    private BufferedReader input;
-    private DataOutputStream out;
+    private BufferedReader reader;
     public static ClientConnection instance;
 
-    public static ClientConnection getInstance(String address, int port) {
+    private static DataOutputStream dataOutputStream = null;
+    private static DataInputStream dataInputStream = null;
+
+    public static ClientConnection getInstance() {
         if(instance == null) {
-            instance = new ClientConnection(address, port);
+            instance = new ClientConnection("localhost", 6666);
         }
         return instance;
     }
 
-    // constructor that takes the IP Address and the Port
     public ClientConnection(String address, int port) {
-        // we try to establish a connection
         try
         {
-            // creates a socket with the given information
-            socket = new Socket(address, port);
+            socket = new Socket("localhost",port);
             System.out.println("Connected");
 
-            // we 'ready' the input reader
-            input = new BufferedReader(new InputStreamReader(System.in));
-
-            // and the output that is connected to the Socket
-            out = new DataOutputStream(socket.getOutputStream());
+            dataOutputStream = new DataOutputStream(socket.getOutputStream());
+            dataInputStream = new DataInputStream(socket.getInputStream());
+            reader = new BufferedReader(new InputStreamReader(dataInputStream));
         }
         catch(UnknownHostException u)
         {
@@ -80,9 +70,21 @@ public class ClientConnection {
 
     public void send (String line) {
         try {
-            out.writeBytes(line);
+            dataOutputStream.writeBytes(line);
         } catch(IOException i) {
             System.out.println(i);
         }
+    }
+
+    public String receive () {
+        System.out.println("++++++++++");
+        String line = "";
+        try {
+            line = reader.readLine();
+        } catch (IOException i) {
+            System.out.println(i);
+        }
+        System.out.println("========");
+        return line;
     }
 }

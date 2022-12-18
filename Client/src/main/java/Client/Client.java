@@ -7,7 +7,7 @@ import java.io.*;
 public class Client {
     public static void main(String args[])
     {
-        ClientConnection Conn = ClientConnection.getInstance("127.0.0.1", 6666);
+        ClientConnection Conn = ClientConnection.getInstance();
         SignInFrame frame = new SignInFrame();
     }
 }
