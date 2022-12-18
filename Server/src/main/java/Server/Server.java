@@ -2,49 +2,20 @@ package Server;
 
 import com.google.gson.Gson;
 import forms.AuthenticationForm;
+import org.jooq.DSLContext;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
-    /*public static void main(String[] args) {
-        int port = 80;
-        try (ServerSocket serverSocket = new ServerSocket(port)) {
-            System.out.println("Server on port: " + port);
-            try (Socket socket = serverSocket.accept()) {
-                System.out.println("Accept");
-                InputStream inputStream = socket.getInputStream();
-                OutputStream outputStream = socket.getOutputStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                Thread.sleep(10);
-
-                String text = "";
-                while (reader.ready()) {
-                    text += reader.readLine();
-                }
-                System.out.println(text);
-                String toClientText = text.toUpperCase();
-
-                PrintWriter writer = new PrintWriter(outputStream,true);
-                writer.println(toClientText);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }*/
-
     private Socket socket;
     private ServerSocket server;
     private DataInputStream in;
+    private int port;
+    private DatabaseManager databaseManager;
 
-
-    // creates a server and connects it to the given port
-    public Server(int port)
-    {
+    public void run() {
         // starts server and waits for a connection
         try {
             // we start our server
@@ -83,12 +54,21 @@ public class Server {
             System.out.println(auth.login);
             System.out.println(auth.password);
 
+            DSLContext context = databaseManager.getContext();
         } catch(IOException i) {
             System.out.println(i);
         }
     }
 
-    public static void main(String args[]) {
-        Server server = new Server(6666);
+    public Server(int port) {
+        this.port = port;
+    }
+
+    public DatabaseManager getDatabaseManager() {
+        return databaseManager;
+    }
+
+    public void setDatabaseManager(DatabaseManager databaseManager) {
+        this.databaseManager = databaseManager;
     }
 }
