@@ -76,7 +76,7 @@ public class Server {
         String line = "";
         try {
             line = reader.readLine();
-            System.out.println(line);
+            System.out.println("Receive from client: " + line);
         } catch (IOException i) {
             System.out.println(i);
         }

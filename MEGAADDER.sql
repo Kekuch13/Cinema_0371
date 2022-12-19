@@ -72,7 +72,9 @@ CREATE TABLE tickets
     CONSTRAINT ticket_sess FOREIGN KEY(date, time, hall_id) REFERENCES sessions(date, time, hall_id)
 );
 INSERT INTO roles(role_id, role)
-VALUES (1, 'USER');
+VALUES (1, 'USER'),
+       (2, 'ADMIN');
 
 INSERT INTO users(username, password, role_id)
-VALUES ('kekekeke', 'kekekeke', 1);
+VALUES ('kekekeke', 'kekekeke', 1),
+       ('director', 'director', 2);

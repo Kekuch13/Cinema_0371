@@ -46,6 +46,7 @@ public class ClientConnection {
         String line = "";
         try {
             line = reader.readLine();
+            System.out.println("Receive from Server: " + line);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
