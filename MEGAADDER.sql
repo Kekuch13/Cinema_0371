@@ -6,6 +6,12 @@ drop table if exists seats cascade;
 drop table if exists sessions cascade;
 drop table if exists tickets cascade;
 
+create table roles
+(
+    role_id serial primary key,
+    role varchar(10)
+);
+
 create table users
 (
     user_id         serial primary key unique,
@@ -13,14 +19,9 @@ create table users
     password        varchar(70) not null,
     name            varchar(20),
     surname         varchar(20),
-    active          boolean default true
-);
-
-create table roles
-(
-    user_id   integer not null primary key,
-    role varchar(10) not null,
-    CONSTRAINT user_role FOREIGN KEY(user_id) REFERENCES users(user_id)
+    role_id         int not null,
+    active          boolean default true,
+    CONSTRAINT user_role FOREIGN KEY(role_id) REFERENCES roles(role_id)
 );
 
 create table films
@@ -63,7 +64,17 @@ CREATE TABLE tickets
 (
     ticket_id serial primary key unique,
     seat_id integer not null,
-    row integer,
-    seat integer,
-    CONSTRAINT ticket_seat FOREIGN KEY(seat_id) REFERENCES seats(seat_id)
+    date date,
+    time time,
+    hall_id integer,
+    is_sold bool DEFAULT false,
+    CONSTRAINT ticket_seat FOREIGN KEY(seat_id) REFERENCES seats(seat_id),
+    CONSTRAINT ticket_sess FOREIGN KEY(date, time, hall_id) REFERENCES sessions(date, time, hall_id)
 );
+INSERT INTO roles(role_id, role)
+VALUES (1, 'USER'),
+       (2, 'ADMIN');
+
+INSERT INTO users(username, password, role_id)
+VALUES ('kekekeke', 'kekekeke', 1),
+       ('director', 'director', 2);

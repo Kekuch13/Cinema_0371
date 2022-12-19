@@ -1,5 +1,9 @@
 package Server;
 
+import org.jooq.DSLContext;
+import org.jooq.SQLDialect;
+import org.jooq.impl.DSL;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -10,6 +14,7 @@ import java.sql.SQLException;
 public class DatabaseManager {
     private static DatabaseManager dm;
     private Connection conn;
+    private DSLContext context;
 
     private DatabaseManager() {
         try {
@@ -18,26 +23,6 @@ public class DatabaseManager {
             throw new RuntimeException(e);
         }
 
-        /*String userHome = System.getProperty("user.home");
-        String configPath = userHome + "/KSK/database.xml";
-        File file = new File(configPath);
-
-        DatabaseConfig dbConf;
-        XStream xStream = new XStream();
-        xStream.addPermission(AnyTypePermission.ANY);
-        xStream.alias("DatabaseConfiguration", DatabaseConfig.class);
-        if (file.exists()) {
-            dbConf = (DatabaseConfig) xStream.fromXML(file);
-        } else {
-            file.getParentFile().mkdirs();
-            dbConf = new DatabaseConfig();
-            try {
-                xStream.toXML(dbConf, new FileOutputStream(file));
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-        }*/
-
         DatabaseConfig dbConf = new DatabaseConfig();
         String host = dbConf.getHost();
         int port = dbConf.getPort();
@@ -45,11 +30,11 @@ public class DatabaseManager {
         String login = dbConf.getLogin();
         String password = dbConf.getPassword();
         try {
-            conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/cinema", login, password);
+            conn = DriverManager.getConnection("jdbc:postgresql://"+ host + ":" + port  + "/" + base, login, password);
+            context = DSL.using(conn, SQLDialect.POSTGRES);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     public static synchronized DatabaseManager getInstance() {
@@ -62,9 +47,7 @@ public class DatabaseManager {
     public Connection getConnection(){
         return conn;
     }
-
-    public static void main(String[] args) {
-        new DatabaseManager();
+    public DSLContext getContext() {
+        return context;
     }
-
 }

@@ -1,94 +1,117 @@
 package Server;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import forms.AuthenticationForm;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class Server {
-    /*public static void main(String[] args) {
-        int port = 80;
-        try (ServerSocket serverSocket = new ServerSocket(port)) {
-            System.out.println("Server on port: " + port);
-            try (Socket socket = serverSocket.accept()) {
-                System.out.println("Accept");
-                InputStream inputStream = socket.getInputStream();
-                OutputStream outputStream = socket.getOutputStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+    private final int port;
+    private final Socket socket;
+    private final ServerSocket server;
+    private DataOutputStream dataOutputStream = null;
+    private final BufferedReader reader;
+    private DatabaseManager databaseManager;
+    private Gson gson;
 
-                Thread.sleep(10);
-
-                String text = "";
-                while (reader.ready()) {
-                    text += reader.readLine();
-                }
-                System.out.println(text);
-                String toClientText = text.toUpperCase();
-
-                PrintWriter writer = new PrintWriter(outputStream,true);
-                writer.println(toClientText);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+    public Server(int port) {
+        this.gson = new Gson();
+        this.port = port;
+        try {
+            server = new ServerSocket(port);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }*/
-
-    private Socket socket;
-    private ServerSocket server;
-    private DataInputStream in;
-
-
-    // creates a server and connects it to the given port
-    public Server(int port)
-    {
-        // starts server and waits for a connection
+        System.out.println("Server started");
         try {
-            // we start our server
-            server = new ServerSocket(port);
-            System.out.println("Server started");
-
             System.out.println("Waiting for a client ...");
-
-            // we accept the client in the given port
-            // and create a socket
-            // we now have an established connection between our client and our server on the
-            // given socket
             socket = server.accept();
             System.out.println("Client accepted");
 
-            // takes input from the client socket
-            InputStream inputStream = socket.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            dataOutputStream = new DataOutputStream(socket.getOutputStream());
+            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-            String line = "";
-
-            try {
-                line = reader.readLine();
-                System.out.println(line);
-            } catch(IOException i) {
-                System.out.println(i);
+    public void run() {
+        String line;
+        while (true) {
+            line = receiveFromClient();
+            //получаем название формы
+            JsonObject jsonObject = JsonParser.parseString(line).getAsJsonObject();
+            String form = jsonObject.get("form").getAsString();
+            switch (form) {
+                case "authentication":
+                    this.authentication(line);
+                    break;
+                case "kekek":
+                    //to-do
+                    break;
+                case "addFilm":
+                    //to-do
+                    break;
+                case "exit":
+                    System.out.println("Closing connection");
+                    try {
+                        socket.close();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    break;
             }
-            System.out.println("Closing connection");
+        }
+    }
 
-            // close connection
-            socket.close();
+    public String receiveFromClient() {
+        String line = "";
+        try {
+            line = reader.readLine();
+            System.out.println("Receive from client: " + line);
+        } catch (IOException i) {
+            System.out.println(i);
+        }
+        return line;
+    }
 
-            Gson foo = new Gson();
-            AuthenticationForm auth = foo.fromJson(line, AuthenticationForm.class);
-            System.out.println(auth.getForm());
-            System.out.println(auth.login);
-            System.out.println(auth.password);
-
-        } catch(IOException i) {
+    public void sendToClient(String line) {
+        try {
+            dataOutputStream.writeBytes(line + "\n");
+            dataOutputStream.flush();
+        } catch (IOException i) {
             System.out.println(i);
         }
     }
 
-    public static void main(String args[]) {
-        Server server = new Server(6666);
+    public void authentication(String line) {
+        AuthenticationForm auth = gson.fromJson(line, AuthenticationForm.class);
+        try {
+            Connection conn = DatabaseManager.getInstance().getConnection();
+            Statement st = conn.createStatement();
+
+            String k = "select * from users where username = " + "'" + auth.getLogin() + "'" +
+                    " and password = " + "'" + auth.getPassword() + "'";
+            ResultSet r = st.executeQuery(k);
+            if (r.next()) {
+                auth.setValid(true);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        String json = gson.toJson(auth);
+        sendToClient(json);
+    }
+
+    public void setDatabaseManager(DatabaseManager databaseManager) {
+        this.databaseManager = databaseManager;
     }
 }

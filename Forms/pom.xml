@@ -11,6 +11,8 @@
 
     <groupId>forms</groupId>
     <artifactId>Forms</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>19</maven.compiler.source>
