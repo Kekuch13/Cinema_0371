@@ -17,8 +17,8 @@ public class Server {
     private final int port;
     private final Socket socket;
     private final ServerSocket server;
-    private DataOutputStream dataOutputStream = null;
-    private final BufferedReader reader;
+    private DataOutputStream dataOutputStream;
+    private BufferedReader reader;
     private DatabaseManager databaseManager;
     private Gson gson;
 
