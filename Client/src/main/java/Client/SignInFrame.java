@@ -1,6 +1,8 @@
 package Client;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import forms.AuthenticationForm;
 
 import javax.swing.*;
@@ -16,8 +18,10 @@ public class SignInFrame extends JFrame implements ActionListener {
     JCheckBox showPassword;
     ClientConnection Conn;
     AuthenticationForm authForm;
+    private Gson gson;
 
     SignInFrame() {
+        gson = new Gson();
         Conn = ClientConnection.instance;
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -91,29 +95,36 @@ public class SignInFrame extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent evt) {
-        if(evt.getSource() == btn) {
+        if (evt.getSource() == btn) {
             //добавить проверку на пустые поля и длину строки
 
             authForm = new AuthenticationForm(username.getText(), String.valueOf(password.getPassword()), false);
-            System.out.println(authForm);
-            Gson gson = new Gson();
             String json = gson.toJson(authForm);
             String name = username.getText();
-            Conn.send(json+"\n");
-            authForm = gson.fromJson(Conn.receive(), AuthenticationForm.class);
-            System.out.println(authForm);
-            JOptionPane.showMessageDialog(this, "Успешный вход");
 
-            String msg = "Успешный вход";
+            Conn.sendToServer(json);
+
+            String line = Conn.receiveFromServer();
+
+            authForm = gson.fromJson(line, AuthenticationForm.class);
+
+            String msg;
+            if (authForm.isValid) {
+                msg = "Успешный вход";
+                message.setForeground(Color.green);
+            } else {
+                msg = "Неверный логин или пароль";
+                message.setForeground(Color.red);
+            }
 
             message.setText(msg);
         }
-        if(evt.getSource() == resetBtn) {
+        if (evt.getSource() == resetBtn) {
             username.setText("");
             password.setText("");
         }
-        if(evt.getSource() == showPassword) {
-            if(showPassword.isSelected()) {
+        if (evt.getSource() == showPassword) {
+            if (showPassword.isSelected()) {
                 password.setEchoChar((char) 0);
             } else {
                 password.setEchoChar('•');
