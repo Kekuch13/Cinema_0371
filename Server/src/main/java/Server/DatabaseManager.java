@@ -1,9 +1,5 @@
 package Server;
 
-import org.jooq.DSLContext;
-import org.jooq.SQLDialect;
-import org.jooq.impl.DSL;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -11,7 +7,6 @@ import java.sql.SQLException;
 public class DatabaseManager {
     private static DatabaseManager dm;
     private Connection conn;
-    private DSLContext context;
 
     private DatabaseManager() {
         try {
@@ -28,7 +23,6 @@ public class DatabaseManager {
         String password = dbConf.getPassword();
         try {
             conn = DriverManager.getConnection("jdbc:postgresql://"+ host + ":" + port  + "/" + base, login, password);
-            context = DSL.using(conn, SQLDialect.POSTGRES);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -43,8 +37,5 @@ public class DatabaseManager {
 
     public Connection getConnection(){
         return conn;
-    }
-    public DSLContext getContext() {
-        return context;
     }
 }
