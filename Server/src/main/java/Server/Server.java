@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import forms.AuthenticationForm;
 import forms.FilmsForm;
+import forms.TableChangeForm;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -15,6 +16,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class Server {
     private final int port;
@@ -59,8 +62,8 @@ public class Server {
                 case "FilmsList":
                     filmsList(line);
                     break;
-                case "addFilm":
-                    //to-do
+                case "ChangeTable":
+                    changeTable(line);
                     break;
                 case "exit":
                     System.out.println("Closing connection");
@@ -139,6 +142,29 @@ public class Server {
         films.setFilms(filmsList);
         String json = gson.toJson(films);
         sendToClient(json);
+    }
+
+    private void changeTable(String line) {
+        TableChangeForm tableChangeForm = gson.fromJson(line, TableChangeForm.class);
+        if (Objects.equals(tableChangeForm.action, "delete"))
+        {
+
+            try {
+                Connection conn = DatabaseManager.getInstance().getConnection();
+                Statement st = conn.createStatement();
+
+                char[] arrayOfId = Arrays.toString(tableChangeForm.rowIndex).toCharArray();
+                arrayOfId[0] = '(';
+                arrayOfId[arrayOfId.length - 1] = ')';
+                String query = "DELETE FROM films WHERE film_id IN " + String.valueOf(arrayOfId);
+                System.out.println(query);
+
+                int rs = st.executeUpdate(query);
+
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     public void setDatabaseManager(DatabaseManager databaseManager) {

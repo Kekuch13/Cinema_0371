@@ -3,8 +3,10 @@ package Client;
 import Entities.Film;
 import com.google.gson.Gson;
 import forms.FilmsForm;
+import forms.TableChangeForm;
 
 import javax.swing.*;
+import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,6 +20,8 @@ public class AdminPanel extends JFrame implements ActionListener {
     JTable filmsTable;
     JButton schedule, addFilm, redactFilm, deleteFilm, createSession;
 
+    FilmsTableModel ftm = new FilmsTableModel();
+
     AdminPanel(){
         Conn = ClientConnection.instance;
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -25,20 +29,17 @@ public class AdminPanel extends JFrame implements ActionListener {
         this.setSize(800, 600);
         this.setTitle("Фильмы");
         this.setLocationRelativeTo(null);
-        //this.setLayout(null);
-        this.setLayout(new GridBagLayout());
-
+        this.setLayout(null);
+        //this.setLayout(new GridBagLayout());
         FilmsForm filmsForm = new FilmsForm();
 
         gson = new Gson();
         String json = gson.toJson(filmsForm);
         Conn.sendToServer(json);
 
-
-        FilmsTableModel ftm = new FilmsTableModel();
         filmsTable = new JTable(ftm);
         JScrollPane filmsTableScrollPage = new JScrollPane(filmsTable);
-        filmsTableScrollPage.setPreferredSize(new Dimension(600, 400));
+        //filmsTableScrollPage.setPreferredSize(new Dimension(600, 400));
         /*int tableSize = Conn.receiveFromServer();*/
 
         String line = Conn.receiveFromServer();
@@ -50,13 +51,12 @@ public class AdminPanel extends JFrame implements ActionListener {
             ftm.addData(new String[]{String.valueOf(filmsFormList.get(i).getFilm_id()), filmsFormList.get(i).getTitle(), String.valueOf(filmsFormList.get(i).getDuration()), filmsFormList.get(i).getGenre(), String.valueOf(filmsFormList.get(i).getYear()), filmsFormList.get(i).getCountry()});
         }
 
+        filmsTableScrollPage.setBounds(70, 80, 650, 370);
 
-        this.add(filmsTableScrollPage, new GridBagConstraints(1, 1, 2, 2, 1, 1,
-                GridBagConstraints.NORTH, GridBagConstraints.BOTH,
-                new Insets(100, 20, 100,20), 0, 0));
+        this.add(filmsTableScrollPage);
 
 
-        /*schedule = new JButton("Расписание сеансов");
+        schedule = new JButton("Расписание сеансов");
         schedule.setBounds(20, 20, 250, 40);
         schedule.setFont(new Font("Arial", Font.BOLD, 16));
         schedule.setBackground(Color.blue);
@@ -88,13 +88,21 @@ public class AdminPanel extends JFrame implements ActionListener {
         this.add(schedule);
         this.add(addFilm);
         this.add(redactFilm);
-        this.add(deleteFilm);*/
+        this.add(deleteFilm);
 
         this.setVisible(true);
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent event) {
+        if (event.getSource() == deleteFilm){
+            int[] setOfID = ftm.getSelectedID(filmsTable.getSelectedRows());
 
+            TableChangeForm tableChangeForm = new TableChangeForm("delete", setOfID);
+            String json = gson.toJson(tableChangeForm);
+            Conn.sendToServer(json);
+            AdminPanel adminFrame = new AdminPanel();
+            this.dispose();
+        }
     }
 }
