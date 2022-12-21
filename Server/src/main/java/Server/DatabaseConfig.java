@@ -7,7 +7,7 @@ public class DatabaseConfig implements Serializable {
     private int port = 5432;
     private String base = "cinema";
     private String login = "postgres";
-    private String password = "Happy2022";
+    private String password = "1234";
 
     public DatabaseConfig() {
     }

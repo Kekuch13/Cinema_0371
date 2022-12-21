@@ -1,8 +1,10 @@
 package Server;
 
+import Entities.Film;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import forms.FilmsForm;
 import forms.AuthenticationForm;
 
 import java.io.*;
@@ -12,6 +14,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 public class Server {
     private final int port;
@@ -52,10 +55,13 @@ public class Server {
             String form = jsonObject.get("form").getAsString();
             switch (form) {
                 case "authentication":
-                    this.authentication(line);
+                    authentication(line);
                     break;
                 case "kekek":
                     //to-do
+                    break;
+                case "FilmsList":
+                    filmsListAdmin(line);
                     break;
                 case "addFilm":
                     //to-do
@@ -108,6 +114,38 @@ public class Server {
             throw new RuntimeException(e);
         }
         String json = gson.toJson(auth);
+        sendToClient(json);
+    }
+
+    public void filmsListAdmin(String line){
+        FilmsForm filmsForm = gson.fromJson(line, FilmsForm.class);
+        ArrayList<Film> filmsList = new ArrayList<Film>();
+        try {
+            Connection conn = DatabaseManager.getInstance().getConnection();
+            Statement st = conn.createStatement();
+            String k = "select * from films;";
+            ResultSet rs = st.executeQuery(k);
+            //ResultSet rSize = st.executeQuery("SELECT COUNT(*) FROM films");
+
+            //sendToClient(rSize.toString());
+
+            while(rs.next()) {
+                int id = rs.getInt("film_id");
+                String title = rs.getString("title");
+                String genre = rs.getString("genre");
+                int duration = rs.getInt("duration");
+                int year = rs.getInt("year");
+                String country = rs.getString("country");
+                Film film = new Film(id, title, year, genre, duration, country);
+                filmsList.add(film);
+            }
+        }
+        catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        filmsForm.setFilms(filmsList);
+        String json = gson.toJson(filmsForm);
+        System.out.println(json);
         sendToClient(json);
     }
 

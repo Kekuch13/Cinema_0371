@@ -1,25 +1,22 @@
 package Client;
 
+import Entities.Film;
+import com.google.gson.Gson;
+import forms.FilmsForm;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class AdminPanel extends JFrame implements ActionListener {
 
     ClientConnection Conn;
+    private Gson gson;
 
-    JTable films;
+    JTable filmsTable;
     JButton schedule, addFilm, redactFilm, deleteFilm, createSession;
-
-    ///////////////////////
-    private Object[][] array = new String[][] {{ "Сахар" , "кг", "1.5" },
-            { "Мука"  , "кг", "4.0" },
-            { "Молоко", "л" , "2.2" }};
-    // Заголовки столбцов
-    private Object[] columnsHeader = new String[] {"Наименование", "Ед.измерения",
-            "Количество"};
-    ////////////////////////
 
     AdminPanel(){
         Conn = ClientConnection.instance;
@@ -28,15 +25,38 @@ public class AdminPanel extends JFrame implements ActionListener {
         this.setSize(800, 600);
         this.setTitle("Фильмы");
         this.setLocationRelativeTo(null);
-        this.setLayout(null);
+        //this.setLayout(null);
+        this.setLayout(new GridBagLayout());
+
+        FilmsForm filmsForm = new FilmsForm();
+
+        gson = new Gson();
+        String json = gson.toJson(filmsForm);
+        Conn.sendToServer(json);
 
 
+        FilmsTableModel ftm = new FilmsTableModel();
+        filmsTable = new JTable(ftm);
+        JScrollPane filmsTableScrollPage = new JScrollPane(filmsTable);
+        filmsTableScrollPage.setPreferredSize(new Dimension(600, 400));
+        /*int tableSize = Conn.receiveFromServer();*/
 
-        films = new JTable(array, columnsHeader);
-        Box contents = new Box(BoxLayout.Y_AXIS);
-        contents.add(new JScrollPane(films));
+        String line = Conn.receiveFromServer();
+        filmsForm = gson.fromJson(line, FilmsForm.class);
+        ArrayList<Film> filmsFormList = filmsForm.films;
 
-        schedule = new JButton("Расписание сеансов");
+
+        for (int i = 0; i < filmsFormList.size(); i++) {
+            ftm.addData(new String[]{String.valueOf(filmsFormList.get(i).getFilm_id()), filmsFormList.get(i).getTitle(), String.valueOf(filmsFormList.get(i).getDuration()), filmsFormList.get(i).getGenre(), String.valueOf(filmsFormList.get(i).getYear()), filmsFormList.get(i).getCountry()});
+        }
+
+
+        this.add(filmsTableScrollPage, new GridBagConstraints(1, 1, 2, 2, 1, 1,
+                GridBagConstraints.NORTH, GridBagConstraints.BOTH,
+                new Insets(100, 20, 100,20), 0, 0));
+
+
+        /*schedule = new JButton("Расписание сеансов");
         schedule.setBounds(20, 20, 250, 40);
         schedule.setFont(new Font("Arial", Font.BOLD, 16));
         schedule.setBackground(Color.blue);
@@ -68,8 +88,7 @@ public class AdminPanel extends JFrame implements ActionListener {
         this.add(schedule);
         this.add(addFilm);
         this.add(redactFilm);
-        this.add(deleteFilm);
-        this.add(films);
+        this.add(deleteFilm);*/
 
         this.setVisible(true);
     }
