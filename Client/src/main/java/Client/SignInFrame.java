@@ -1,8 +1,6 @@
 package Client;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import forms.AuthenticationForm;
 
 import javax.swing.*;
@@ -103,7 +101,6 @@ public class SignInFrame extends JFrame implements ActionListener {
             String name = username.getText();
 
             Conn.sendToServer(json);
-
             String line = Conn.receiveFromServer();
 
             authForm = gson.fromJson(line, AuthenticationForm.class);
