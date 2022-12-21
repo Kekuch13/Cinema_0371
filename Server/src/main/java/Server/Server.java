@@ -1,9 +1,11 @@
 package Server;
 
+import Entities.Film;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import forms.AuthenticationForm;
+import forms.FilmsForm;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -12,13 +14,14 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 public class Server {
     private final int port;
     private final Socket socket;
     private final ServerSocket server;
     private DataOutputStream dataOutputStream;
-    private BufferedReader reader;
+    private DataInputStream dataInputStream;
     private DatabaseManager databaseManager;
     private Gson gson;
 
@@ -35,9 +38,8 @@ public class Server {
             System.out.println("Waiting for a client ...");
             socket = server.accept();
             System.out.println("Client accepted");
-
             dataOutputStream = new DataOutputStream(socket.getOutputStream());
-            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            dataInputStream = new DataInputStream(socket.getInputStream());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -52,10 +54,10 @@ public class Server {
             String form = jsonObject.get("form").getAsString();
             switch (form) {
                 case "authentication":
-                    this.authentication(line);
+                    authentication(line);
                     break;
-                case "kekek":
-                    //to-do
+                case "FilmsList":
+                    filmsList(line);
                     break;
                 case "addFilm":
                     //to-do
@@ -75,7 +77,7 @@ public class Server {
     public String receiveFromClient() {
         String line = "";
         try {
-            line = reader.readLine();
+            line = dataInputStream.readUTF();
             System.out.println("Receive from client: " + line);
         } catch (IOException i) {
             System.out.println(i);
@@ -85,8 +87,9 @@ public class Server {
 
     public void sendToClient(String line) {
         try {
-            dataOutputStream.writeBytes(line + "\n");
+            dataOutputStream.writeUTF(line);
             dataOutputStream.flush();
+            System.out.println("Send to client: " + line);
         } catch (IOException i) {
             System.out.println(i);
         }
@@ -108,6 +111,33 @@ public class Server {
             throw new RuntimeException(e);
         }
         String json = gson.toJson(auth);
+        sendToClient(json);
+    }
+
+    public void filmsList(String line) {
+        FilmsForm films = gson.fromJson(line, FilmsForm.class);
+        ArrayList<Film> filmsList = new ArrayList<Film>();
+        try {
+            Connection conn = DatabaseManager.getInstance().getConnection();
+            Statement st = conn.createStatement();
+
+            String query = "select * from films";
+            ResultSet rs = st.executeQuery(query);
+            while(rs.next()) {
+                int id = rs.getInt("film_id");
+                String title = rs.getString("title");
+                int year = rs.getInt("year");
+                String genre = rs.getString("genre");
+                int duration = rs.getInt("duration");
+                String country = rs.getString("country");
+                Film film = new Film(id, title, year, genre, duration, country);
+                filmsList.add(film);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        films.setFilms(filmsList);
+        String json = gson.toJson(films);
         sendToClient(json);
     }
 
