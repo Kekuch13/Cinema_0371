@@ -78,3 +78,8 @@ VALUES (1, 'USER'),
 INSERT INTO users(username, password, role_id)
 VALUES ('kekekeke', 'kekekeke', 1),
        ('director', 'director', 2);
+
+INSERT INTO films(title, year, genre, duration, country)
+VALUES ('Гарри Поттер', 2003, 'Фантастика', 127, 'Великобритания'),
+       ('Матрица', 2021, 'Комедия', 96, 'США'),
+       ('Горько', 2016, 'Ужасы', 113, 'Россия');
