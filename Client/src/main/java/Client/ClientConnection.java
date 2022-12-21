@@ -6,10 +6,9 @@ import java.net.UnknownHostException;
 
 public class ClientConnection {
     public static ClientConnection instance;
-    private static DataOutputStream dataOutputStream = null;
-    private static final DataInputStream dataInputStream = null;
+    private static DataOutputStream dataOutputStream;
+    private static DataInputStream dataInputStream;
     private Socket socket;
-    private BufferedReader reader;
 
     public ClientConnection(String address, int port) {
         try {
@@ -17,8 +16,7 @@ public class ClientConnection {
             System.out.println("Connected");
 
             dataOutputStream = new DataOutputStream(socket.getOutputStream());
-            //dataInputStream = new DataInputStream(socket.getInputStream());
-            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            dataInputStream = new DataInputStream(socket.getInputStream());
         } catch (UnknownHostException u) {
             System.out.println(u);
         } catch (IOException i) {
@@ -35,8 +33,9 @@ public class ClientConnection {
 
     public void sendToServer(String line) {
         try {
-            dataOutputStream.writeBytes(line + "\n");
+            dataOutputStream.writeUTF(line);
             dataOutputStream.flush();
+            System.out.println("Send to server: " + line);
         } catch (IOException i) {
             System.out.println(i);
         }
@@ -45,7 +44,7 @@ public class ClientConnection {
     public String receiveFromServer() {
         String line = "";
         try {
-            line = reader.readLine();
+            line = dataInputStream.readUTF();
             System.out.println("Receive from Server: " + line);
         } catch (IOException e) {
             throw new RuntimeException(e);
