@@ -12,7 +12,7 @@ public class FilmsForm {
     public FilmsForm() {
     }
 
-    public FilmsForm(ArrayList<Film> film) {
+    public FilmsForm(ArrayList<Film> films) {
         this.films = films;
     }
 

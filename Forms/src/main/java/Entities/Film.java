@@ -70,13 +70,6 @@ public class Film {
 
     @Override
     public String toString() {
-        return "Film{" +
-                "film_id=" + film_id +
-                ", title='" + title + '\'' +
-                ", year=" + year +
-                ", genre='" + genre + '\'' +
-                ", duration=" + duration +
-                ", country='" + country + '\'' +
-                '}';
+        return title;
     }
 }
