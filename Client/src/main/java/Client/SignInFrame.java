@@ -9,13 +9,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class SignInFrame extends JFrame implements ActionListener {
-    JPasswordField password;
-    JTextField username;
-    JLabel labelPassword, labelUsername, message, title;
-    JButton btn, resetBtn;
-    JCheckBox showPassword;
-    ClientConnection Conn;
-    AuthenticationForm authForm;
+    private JPasswordField password;
+    private JTextField username;
+    private JLabel labelPassword, labelUsername, message, title;
+    private JButton btn, resetBtn;
+    private JCheckBox showPassword;
+    private ClientConnection Conn;
+    private AuthenticationForm authForm;
     private Gson gson;
 
     SignInFrame() {
