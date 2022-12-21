@@ -1,67 +1,71 @@
 package Client;
 
-import Client.UserFramePanels.FilmsPanel;
+import Client.UserFramePanels.*;
+import Entities.Film;
+import Entities.Session;
+import com.google.gson.Gson;
+import forms.FilmsForm;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class UserFrame extends JFrame implements ActionListener {
-    JPanel mainPanel;
-    FilmsPanel filmsPanel;
-    //SessionsPanel sessionsPanel;
-    //TicketsPanel ticketsPanel;
-    JPanel sessionsPanel;
-    JPanel ticketsPanel;
-    JButton btn1;
-    JButton btn2;
-    CardLayout cl = new CardLayout();
+    private ClientConnection Conn;
+    private Gson gson = new Gson();
+    private JPanel mainPanel;
+    private FilmsPanel filmsPanel;
+    private SessionsPanel sessionsPanel;
+    private TicketsPanel ticketsPanel;
+    private JButton btn2;
+    private CardLayout cl = new CardLayout();
 
     // Films
     // Sessions - храним только для выбранного фильма и обновляем при изменении фильма
     // Tickets - храним только для выбранного сеанса и обновляем при смене сеанса
 
     public UserFrame() {
+        Conn = ClientConnection.instance;
+
         mainPanel = new JPanel();
         mainPanel.setSize(800, 600);
         mainPanel.setLayout(cl);
 
-        btn1 = new JButton("toFilms");
-        btn1.setBounds(300, 300, 100, 40);
-        btn1.setFont(new Font("Arial", Font.BOLD, 16));
-        btn1.setBackground(Color.white);
-        btn1.setForeground(Color.black);
-
         btn2 = new JButton("Back");
-        btn2.setBounds(500, 300, 100, 40);
+        btn2.setPreferredSize(new Dimension(100, 150));
         btn2.setFont(new Font("Arial", Font.BOLD, 16));
         btn2.setBackground(Color.yellow);
         btn2.setForeground(Color.black);
 
-        filmsPanel = new FilmsPanel();
-        filmsPanel.setBackground(Color.red);
-        //filmsPanel.setSize(800, 600);
-        //filmsPanel.setLayout(null);
-        filmsPanel.add(btn1);
-
-        //sessionsPanel = new SessionsPanel();
-        sessionsPanel = new JPanel();
+        sessionsPanel = new SessionsPanel();
         sessionsPanel.setBackground(Color.green);
-        sessionsPanel.setSize(800, 600);
-        sessionsPanel.setLayout(null);
         sessionsPanel.add(btn2);
 
-        btn1.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                cl.show(mainPanel, "2");
-            }
+        FilmsForm filmsForm = new FilmsForm(null);
+        String json = gson.toJson(filmsForm);
+        Conn.sendToServer(json);
+        String line = Conn.receiveFromServer();
+        filmsForm = gson.fromJson(line, FilmsForm.class);
+
+        DefaultListModel<Film> kek = new DefaultListModel<>();
+        for(int i = 0; i < filmsForm.films.size(); ++i) {
+            kek.addElement(filmsForm.films.get(i));
+        }
+        filmsPanel = new FilmsPanel(kek);
+        filmsPanel.filmList.getSelectionModel().addListSelectionListener(e -> {
+            Film film = filmsPanel.filmList.getSelectedValue();
+            //sessionsPanel.updateList(film.getFilm_id());
+            sessionsPanel.setFilm_id(film.getFilm_id()); // установка ID выбранного фильма
+            cl.show(mainPanel, "2");
         });
 
         btn2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
+                System.out.println(sessionsPanel.getFilm_id()); // вывод ID выбранного фильма в консоль
                 cl.show(mainPanel, "1");
             }
         });

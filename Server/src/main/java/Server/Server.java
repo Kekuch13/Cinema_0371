@@ -1,19 +1,15 @@
 package Server;
 
-import Entities.Film;
+import Entities.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import forms.AuthenticationForm;
-import forms.FilmsForm;
+import forms.*;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class Server {
@@ -62,6 +58,8 @@ public class Server {
                 case "addFilm":
                     //to-do
                     break;
+                case "sessions":
+                    sessionsList(line);
                 case "exit":
                     System.out.println("Closing connection");
                     try {
@@ -138,6 +136,30 @@ public class Server {
         }
         films.setFilms(filmsList);
         String json = gson.toJson(films);
+        sendToClient(json);
+    }
+
+    public void sessionsList(String line) {
+        SessionsForm sessionsForm = gson.fromJson(line, SessionsForm.class);
+        ArrayList<Session> sessionsList = new ArrayList<Session>();
+        try {
+            Connection conn = DatabaseManager.getInstance().getConnection();
+            Statement st = conn.createStatement();
+
+            String query = "select * from sessions where film_id = " + String.valueOf(sessionsForm.getFilm_id());
+            ResultSet rs = st.executeQuery(query);
+            while(rs.next()) {
+                Date date = rs.getDate("date");
+                Time time = rs.getTime("time");
+                int hall_id = rs.getInt("hall_id");
+                Session session = new Session(date, time, hall_id, sessionsForm.getFilm_id());
+                sessionsList.add(session);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        sessionsForm.setSessions(sessionsList);
+        String json = gson.toJson(sessionsForm);
         sendToClient(json);
     }
 
