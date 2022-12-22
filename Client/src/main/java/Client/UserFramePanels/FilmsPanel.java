@@ -7,12 +7,14 @@ import java.awt.*;
 
 public class FilmsPanel extends JPanel  {
     public JList<Film> filmList;
+    public DefaultListModel<Film> filmsModel = new DefaultListModel<>();
 
-    public FilmsPanel(DefaultListModel<Film> filmsModel) {
+    public FilmsPanel() {
         this.setSize(800, 600);
         this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
 
         filmList = new JList<>();
+        filmList.setModel(filmsModel);
         filmList.setSelectionBackground(Color.yellow);
         filmList.setBackground(Color.pink);
         filmList.setModel(filmsModel);
