@@ -46,8 +46,15 @@ public class Server {
         while (true) {
             line = receiveFromClient();
             //получаем название формы
-            JsonObject jsonObject = JsonParser.parseString(line).getAsJsonObject();
-            String form = jsonObject.get("form").getAsString();
+            JsonObject jsonObject;
+            String form = "";
+            try {
+                jsonObject = JsonParser.parseString(line).getAsJsonObject();
+                form = jsonObject.get("form").getAsString();
+            } catch (IllegalStateException Ill) {
+                System.out.println(Ill.getMessage());
+            }
+
             switch (form) {
                 case "authentication":
                     authentication(line);
@@ -60,6 +67,7 @@ public class Server {
                     break;
                 case "sessions":
                     sessionsList(line);
+                    break;
                 case "exit":
                     System.out.println("Closing connection");
                     try {
