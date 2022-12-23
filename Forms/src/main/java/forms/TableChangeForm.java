@@ -1,18 +1,26 @@
 package forms;
 
+import Entities.Film;
+
 import java.util.ArrayList;
 
 public class TableChangeForm {
     final String form = "ChangeTable";
-
     public String action;
     public int[] rowIndex;
+
+    public Film film;
 
 
 
     public TableChangeForm(String action, int[] rowIndex) {
         this.action = action;
         this.rowIndex = rowIndex;
+    }
+
+    public TableChangeForm(String action, Film film){
+        this.action = action;
+        this.film = film;
     }
 
     public String getForm() {

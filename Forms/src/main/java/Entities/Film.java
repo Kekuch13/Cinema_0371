@@ -20,6 +20,14 @@ public class Film {
         this.country = country;
     }
 
+    public Film(String title, int year, String genre, int duration, String country) {
+        this.title = title;
+        this.year = year;
+        this.genre = genre;
+        this.duration = duration;
+        this.country = country;
+    }
+
     public int getFilm_id() {
         return film_id;
     }

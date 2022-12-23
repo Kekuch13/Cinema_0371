@@ -1,10 +1,12 @@
 package Server;
 
 import Entities.Film;
+import Entities.Session;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import forms.AuthenticationForm;
+import forms.CreateSessionForm;
 import forms.FilmsForm;
 import forms.TableChangeForm;
 
@@ -64,6 +66,9 @@ public class Server {
                     break;
                 case "ChangeTable":
                     changeTable(line);
+                    break;
+                case "CreateSession":
+                    createSession(line);
                     break;
                 case "exit":
                     System.out.println("Closing connection");
@@ -126,7 +131,7 @@ public class Server {
 
             String query = "select * from films";
             ResultSet rs = st.executeQuery(query);
-            while(rs.next()) {
+            while (rs.next()) {
                 int id = rs.getInt("film_id");
                 String title = rs.getString("title");
                 int year = rs.getInt("year");
@@ -146,9 +151,7 @@ public class Server {
 
     private void changeTable(String line) {
         TableChangeForm tableChangeForm = gson.fromJson(line, TableChangeForm.class);
-        if (Objects.equals(tableChangeForm.action, "delete"))
-        {
-
+        if (Objects.equals(tableChangeForm.action, "delete")) {
             try {
                 Connection conn = DatabaseManager.getInstance().getConnection();
                 Statement st = conn.createStatement();
@@ -164,6 +167,38 @@ public class Server {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
+        } else if (Objects.equals(tableChangeForm.action, "add")) {
+            try {
+                Connection conn = DatabaseManager.getInstance().getConnection();
+                Statement st = conn.createStatement();
+                Film film = tableChangeForm.film;
+
+                String query = "INSERT INTO films VALUES (default, '" + film.getTitle() + "', '" + film.getYear() + "', '" + film.getGenre() + "', '" + film.getDuration() + "', '" + film.getCountry() + "')";
+                System.out.println(query);
+
+                int rs = st.executeUpdate(query);
+
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private void createSession(String line) {
+        CreateSessionForm createSessionForm = gson.fromJson(line, CreateSessionForm.class);
+
+        try {
+            Connection conn = DatabaseManager.getInstance().getConnection();
+            Statement st = conn.createStatement();
+
+            Session addedSession = createSessionForm.getSession();
+            String query = "INSERT INTO sessions VALUES ('" + addedSession.getDate() + "', '" + addedSession.getTime() + "', '" + addedSession.getHall_id() + "', '" + addedSession.getFilm_id() + "')";
+            System.out.println(query);
+
+            int rs = st.executeUpdate(query);
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
