@@ -6,6 +6,8 @@ public class AuthenticationForm {
     public String password;
     public boolean isValid;
 
+    public String role;
+
     public String getForm() {
         return form;
     }
@@ -32,6 +34,14 @@ public class AuthenticationForm {
 
     public void setValid(boolean valid) {
         isValid = valid;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public AuthenticationForm(String login, String password, boolean isValid) {

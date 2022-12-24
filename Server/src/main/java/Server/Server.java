@@ -117,9 +117,10 @@ public class Server {
 
             String k = "select * from users where username = " + "'" + auth.getLogin() + "'" +
                     " and password = " + "'" + auth.getPassword() + "'";
-            ResultSet r = st.executeQuery(k);
-            if (r.next()) {
+            ResultSet rs = st.executeQuery(k);
+            if (rs.next()) {
                 auth.setValid(true);
+                auth.setRole(rs.getString("role"));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

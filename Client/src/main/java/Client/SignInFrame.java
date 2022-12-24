@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Objects;
 
 public class SignInFrame extends JFrame implements ActionListener {
     private JPasswordField password;
@@ -107,14 +108,17 @@ public class SignInFrame extends JFrame implements ActionListener {
 
             String msg;
             if (authForm.isValid) {
-                msg = "Успешный вход";
-                message.setForeground(Color.green);
+                if (Objects.equals(authForm.getRole(), "USER")){
+                    UserFrame userFrame = new UserFrame();
+                } else {
+                    AdminPanel adminPanel = new AdminPanel();
+                }
+                this.dispose();
             } else {
                 msg = "Неверный логин или пароль";
                 message.setForeground(Color.red);
+                message.setText(msg);
             }
-
-            message.setText(msg);
         }
         if (evt.getSource() == resetBtn) {
             username.setText("");
