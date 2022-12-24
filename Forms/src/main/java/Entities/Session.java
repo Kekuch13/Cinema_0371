@@ -9,6 +9,9 @@ public class Session {
     private int hall_id;
     private int film_id;
 
+    public Session() {
+    }
+
     public Session(Date date, Time time, int hall_id, int film_id) {
         this.date = date;
         this.time = time;

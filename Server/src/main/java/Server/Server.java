@@ -11,6 +11,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class Server {
     private final int port;
@@ -47,7 +49,7 @@ public class Server {
             line = receiveFromClient();
             //получаем название формы
             JsonObject jsonObject;
-            String form = "";
+            String form = "exit";
             try {
                 jsonObject = JsonParser.parseString(line).getAsJsonObject();
                 form = jsonObject.get("form").getAsString();
@@ -67,6 +69,11 @@ public class Server {
                     break;
                 case "sessions":
                     sessionsList(line);
+                case "ChangeTable":
+                    changeTable(line);
+                    break;
+                case "CreateSession":
+                    createSession(line);
                     break;
                 case "exit":
                     System.out.println("Closing connection");
@@ -129,7 +136,7 @@ public class Server {
 
             String query = "select * from films";
             ResultSet rs = st.executeQuery(query);
-            while(rs.next()) {
+            while (rs.next()) {
                 int id = rs.getInt("film_id");
                 String title = rs.getString("title");
                 int year = rs.getInt("year");
@@ -198,6 +205,59 @@ public class Server {
         ticketsForm.setTickets(ticketsList);
         String json = gson.toJson(ticketsForm);
         sendToClient(json);
+    }
+
+    private void changeTable(String line) {
+        TableChangeForm tableChangeForm = gson.fromJson(line, TableChangeForm.class);
+        if (Objects.equals(tableChangeForm.action, "delete")) {
+            try {
+                Connection conn = DatabaseManager.getInstance().getConnection();
+                Statement st = conn.createStatement();
+
+                char[] arrayOfId = Arrays.toString(tableChangeForm.rowIndex).toCharArray();
+                arrayOfId[0] = '(';
+                arrayOfId[arrayOfId.length - 1] = ')';
+                String query = "DELETE FROM films WHERE film_id IN " + String.valueOf(arrayOfId);
+                System.out.println(query);
+
+                int rs = st.executeUpdate(query);
+
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        } else if (Objects.equals(tableChangeForm.action, "add")) {
+            try {
+                Connection conn = DatabaseManager.getInstance().getConnection();
+                Statement st = conn.createStatement();
+                Film film = tableChangeForm.film;
+
+                String query = "INSERT INTO films VALUES (default, '" + film.getTitle() + "', '" + film.getYear() + "', '" + film.getGenre() + "', '" + film.getDuration() + "', '" + film.getCountry() + "')";
+                System.out.println(query);
+
+                int rs = st.executeUpdate(query);
+
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private void createSession(String line) {
+        CreateSessionForm createSessionForm = gson.fromJson(line, CreateSessionForm.class);
+
+        try {
+            Connection conn = DatabaseManager.getInstance().getConnection();
+            Statement st = conn.createStatement();
+
+            Session addedSession = createSessionForm.getSession();
+            String query = "INSERT INTO sessions VALUES ('" + addedSession.getDate() + "', '" + addedSession.getTime() + "', '" + addedSession.getHall_id() + "', '" + addedSession.getFilm_id() + "')";
+            System.out.println(query);
+
+            int rs = st.executeUpdate(query);
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void setDatabaseManager(DatabaseManager databaseManager) {
