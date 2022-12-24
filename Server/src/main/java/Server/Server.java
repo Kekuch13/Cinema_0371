@@ -1,10 +1,10 @@
 package Server;
 
 import Entities.*;
+import forms.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import forms.*;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -62,8 +62,8 @@ public class Server {
                 case "FilmsList":
                     filmsList(line);
                     break;
-                case "addFilm":
-                    //to-do
+                case "tickets":
+                    ticketsList(line);
                     break;
                 case "sessions":
                     sessionsList(line);
@@ -168,6 +168,35 @@ public class Server {
         }
         sessionsForm.setSessions(sessionsList);
         String json = gson.toJson(sessionsForm);
+        sendToClient(json);
+    }
+
+    public void ticketsList(String line) {
+        TicketsForm ticketsForm = gson.fromJson(line, TicketsForm.class);
+        ArrayList<Ticket> ticketsList = new ArrayList<Ticket>();
+        try {
+            Connection conn = DatabaseManager.getInstance().getConnection();
+            Statement st = conn.createStatement();
+
+            String query = "select * from tickets where date = '" + String.valueOf(ticketsForm.getDate()) + "'" +
+                    "AND time = '" + String.valueOf(ticketsForm.getTime()) + "'" + "AND hall_id = " +
+                    ticketsForm.getHall_id();
+            ResultSet rs = st.executeQuery(query);
+            while(rs.next()) {
+                int ticket_id = rs.getInt("ticket_id");
+                int seat_id = rs.getInt("seat_id");
+                Date date = rs.getDate("date");
+                Time time = rs.getTime("time");
+                int hall_id = rs.getInt("hall_id");
+                boolean is_sold = rs.getBoolean("is_sold");
+                Ticket ticket = new Ticket(ticket_id, seat_id, date, time, hall_id, is_sold);
+                ticketsList.add(ticket);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        ticketsForm.setTickets(ticketsList);
+        String json = gson.toJson(ticketsForm);
         sendToClient(json);
     }
 
