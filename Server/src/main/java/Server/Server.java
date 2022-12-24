@@ -159,11 +159,17 @@ public class Server {
     public void sessionsList(String line) {
         SessionsForm sessionsForm = gson.fromJson(line, SessionsForm.class);
         ArrayList<Session> sessionsList = new ArrayList<Session>();
+        ArrayList<String> hallsList = new ArrayList<String>();
         try {
             Connection conn = DatabaseManager.getInstance().getConnection();
             Statement st = conn.createStatement();
 
-            String query = "select * from sessions where film_id = " + String.valueOf(sessionsForm.getFilm_id());
+            String query =
+                    "select date, time, sessions.hall_id, sessions.film_id, duration, name AS hall_name\n" +
+                    "from sessions\n" +
+                    "    inner join films f on f.film_id = sessions.film_id\n" +
+                    "    inner join halls h on h.hall_id = sessions.hall_id\n" +
+                    "where f.film_id = " + String.valueOf(sessionsForm.getFilm_id());
             ResultSet rs = st.executeQuery(query);
             while(rs.next()) {
                 Date date = rs.getDate("date");
@@ -171,11 +177,19 @@ public class Server {
                 int hall_id = rs.getInt("hall_id");
                 Session session = new Session(date, time, hall_id, sessionsForm.getFilm_id());
                 sessionsList.add(session);
+
+                int duration = rs.getInt("duration");
+                sessionsForm.setDuration(duration);
+
+                String hall_name = rs.getString("hall_name");
+                hallsList.add(hall_name);
             }
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         sessionsForm.setSessions(sessionsList);
+        sessionsForm.setHall_name(hallsList);
         String json = gson.toJson(sessionsForm);
         sendToClient(json);
     }

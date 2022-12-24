@@ -20,7 +20,7 @@ public class AdminPanel extends JFrame implements ActionListener {
     private Gson gson;
 
     JTable filmsTable;
-    JButton schedule, addFilm, redactFilm, deleteFilm, createSession;
+    JButton schedule, addFilm, deleteFilm, createSession;
 
     FilmsTableModel ftm = new FilmsTableModel();
 
@@ -128,6 +128,10 @@ public class AdminPanel extends JFrame implements ActionListener {
             } catch (ParseException e) {
                 throw new RuntimeException(e);
             }
+            this.dispose();
+        }
+        if (event.getSource() == schedule){
+            SessionsAdminFrame sessionsAdminFrame = new SessionsAdminFrame(Integer.parseInt(filmsTable.getValueAt(filmsTable.getSelectedRow(), 0).toString()), filmsTable.getValueAt(filmsTable.getSelectedRow(), 1).toString());
             this.dispose();
         }
     }

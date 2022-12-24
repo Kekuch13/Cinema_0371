@@ -7,6 +7,9 @@ import java.util.ArrayList;
 public class SessionsForm {
     final String form = "sessions";
     public int film_id;
+
+    public ArrayList<String> hall_name;
+    public int duration;
     public ArrayList<Session> sessions;
 
     public SessionsForm(int film_id, ArrayList<Session> sessions) {
@@ -39,5 +42,21 @@ public class SessionsForm {
 
     public void setSessions(ArrayList<Session> sessions) {
         this.sessions = sessions;
+    }
+
+    public ArrayList<String> getHall_name() {
+        return hall_name;
+    }
+
+    public void setHall_name(ArrayList<String> hall_name) {
+        this.hall_name = hall_name;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 }

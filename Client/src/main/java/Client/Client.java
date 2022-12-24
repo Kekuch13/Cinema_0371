@@ -5,9 +5,9 @@ public class Client {
     {
         ClientConnection Conn = ClientConnection.getInstance();
         //UserFrame h = new UserFrame();
-        SignInFrame frame = new SignInFrame();
-        //AdminPanel adminframe = new AdminPanel();
-        //AddingFilmDialog addingFilmDialog = new AddingFilmDialog();
-        //AddingSessionDialog addingSessionDialog = new AddingSessionDialog("такой-то");
+
+        //SignInFrame frame = new SignInFrame();
+
+        AdminPanel adminframe = new AdminPanel();
     }
 }
