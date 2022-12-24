@@ -84,7 +84,7 @@ public class AddingFilmDialog extends JDialog implements ActionListener {
         addingBtn = new JButton("Добавить");
         addingBtn.setBounds(50, 350, 130, 40);
         addingBtn.setFont(new Font("Arial", Font.BOLD, 16));
-        addingBtn.setBackground(Color.blue);
+        addingBtn.setBackground(Color.green);
         addingBtn.setForeground(Color.black);
         addingBtn.addActionListener(this);
 

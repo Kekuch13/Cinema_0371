@@ -82,6 +82,7 @@ public class Server {
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
+                    System.exit(0);
                     break;
             }
         }
