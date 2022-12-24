@@ -45,6 +45,14 @@ public class FilmsTableModel extends AbstractTableModel {
         return rows[columnIndex];
     }
 
+    public int[] getSelectedID(int[] selectedRows) {
+        int[] selectedID = new int[selectedRows.length];
+        for (int i = 0; i < selectedRows.length; i++){
+            selectedID[i] = Integer.parseInt(getValueAt(selectedRows[i], 0).toString());
+        }
+        return selectedID;
+    }
+
     public void addData(String [] row){
         String [] rowTable = new String[getColumnCount()];
         rowTable = row;

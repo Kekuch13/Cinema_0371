@@ -1,20 +1,18 @@
 package Server;
 
-import Entities.Film;
+import Entities.*;
+import forms.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import forms.AuthenticationForm;
-import forms.FilmsForm;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class Server {
     private final int port;
@@ -50,8 +48,15 @@ public class Server {
         while (true) {
             line = receiveFromClient();
             //получаем название формы
-            JsonObject jsonObject = JsonParser.parseString(line).getAsJsonObject();
-            String form = jsonObject.get("form").getAsString();
+            JsonObject jsonObject;
+            String form = "exit";
+            try {
+                jsonObject = JsonParser.parseString(line).getAsJsonObject();
+                form = jsonObject.get("form").getAsString();
+            } catch (IllegalStateException Ill) {
+                System.out.println(Ill.getMessage());
+            }
+
             switch (form) {
                 case "authentication":
                     authentication(line);
@@ -59,8 +64,16 @@ public class Server {
                 case "FilmsList":
                     filmsList(line);
                     break;
-                case "addFilm":
-                    //to-do
+                case "tickets":
+                    ticketsList(line);
+                    break;
+                case "sessions":
+                    sessionsList(line);
+                case "ChangeTable":
+                    changeTable(line);
+                    break;
+                case "CreateSession":
+                    createSession(line);
                     break;
                 case "exit":
                     System.out.println("Closing connection");
@@ -69,6 +82,7 @@ public class Server {
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
+                    System.exit(0);
                     break;
             }
         }
@@ -123,7 +137,7 @@ public class Server {
 
             String query = "select * from films";
             ResultSet rs = st.executeQuery(query);
-            while(rs.next()) {
+            while (rs.next()) {
                 int id = rs.getInt("film_id");
                 String title = rs.getString("title");
                 int year = rs.getInt("year");
@@ -139,6 +153,112 @@ public class Server {
         films.setFilms(filmsList);
         String json = gson.toJson(films);
         sendToClient(json);
+    }
+
+    public void sessionsList(String line) {
+        SessionsForm sessionsForm = gson.fromJson(line, SessionsForm.class);
+        ArrayList<Session> sessionsList = new ArrayList<Session>();
+        try {
+            Connection conn = DatabaseManager.getInstance().getConnection();
+            Statement st = conn.createStatement();
+
+            String query = "select * from sessions where film_id = " + String.valueOf(sessionsForm.getFilm_id());
+            ResultSet rs = st.executeQuery(query);
+            while(rs.next()) {
+                Date date = rs.getDate("date");
+                Time time = rs.getTime("time");
+                int hall_id = rs.getInt("hall_id");
+                Session session = new Session(date, time, hall_id, sessionsForm.getFilm_id());
+                sessionsList.add(session);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        sessionsForm.setSessions(sessionsList);
+        String json = gson.toJson(sessionsForm);
+        sendToClient(json);
+    }
+
+    public void ticketsList(String line) {
+        TicketsForm ticketsForm = gson.fromJson(line, TicketsForm.class);
+        ArrayList<Ticket> ticketsList = new ArrayList<Ticket>();
+        try {
+            Connection conn = DatabaseManager.getInstance().getConnection();
+            Statement st = conn.createStatement();
+
+            String query = "select * from tickets where date = '" + String.valueOf(ticketsForm.getDate()) + "'" +
+                    "AND time = '" + String.valueOf(ticketsForm.getTime()) + "'" + "AND hall_id = " +
+                    ticketsForm.getHall_id();
+            ResultSet rs = st.executeQuery(query);
+            while(rs.next()) {
+                int ticket_id = rs.getInt("ticket_id");
+                int seat_id = rs.getInt("seat_id");
+                Date date = rs.getDate("date");
+                Time time = rs.getTime("time");
+                int hall_id = rs.getInt("hall_id");
+                boolean is_sold = rs.getBoolean("is_sold");
+                Ticket ticket = new Ticket(ticket_id, seat_id, date, time, hall_id, is_sold);
+                ticketsList.add(ticket);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        ticketsForm.setTickets(ticketsList);
+        String json = gson.toJson(ticketsForm);
+        sendToClient(json);
+    }
+
+    private void changeTable(String line) {
+        TableChangeForm tableChangeForm = gson.fromJson(line, TableChangeForm.class);
+        if (Objects.equals(tableChangeForm.action, "delete")) {
+            try {
+                Connection conn = DatabaseManager.getInstance().getConnection();
+                Statement st = conn.createStatement();
+
+                char[] arrayOfId = Arrays.toString(tableChangeForm.rowIndex).toCharArray();
+                arrayOfId[0] = '(';
+                arrayOfId[arrayOfId.length - 1] = ')';
+                String query = "DELETE FROM films WHERE film_id IN " + String.valueOf(arrayOfId);
+                System.out.println(query);
+
+                int rs = st.executeUpdate(query);
+
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        } else if (Objects.equals(tableChangeForm.action, "add")) {
+            try {
+                Connection conn = DatabaseManager.getInstance().getConnection();
+                Statement st = conn.createStatement();
+                Film film = tableChangeForm.film;
+
+                String query = "INSERT INTO films VALUES (default, '" + film.getTitle() + "', '" + film.getYear() + "', '" + film.getGenre() + "', '" + film.getDuration() + "', '" + film.getCountry() + "')";
+                System.out.println(query);
+
+                int rs = st.executeUpdate(query);
+
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private void createSession(String line) {
+        CreateSessionForm createSessionForm = gson.fromJson(line, CreateSessionForm.class);
+
+        try {
+            Connection conn = DatabaseManager.getInstance().getConnection();
+            Statement st = conn.createStatement();
+
+            Session addedSession = createSessionForm.getSession();
+            String query = "INSERT INTO sessions VALUES ('" + addedSession.getDate() + "', '" + addedSession.getTime() + "', '" + addedSession.getHall_id() + "', '" + addedSession.getFilm_id() + "')";
+            System.out.println(query);
+
+            int rs = st.executeUpdate(query);
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void setDatabaseManager(DatabaseManager databaseManager) {

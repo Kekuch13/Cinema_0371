@@ -6,6 +6,6 @@ public class User {
     private String password;
     private String name;
     private String surname;
-    private int role_id;
+    private String role;
     private boolean active;
 }
