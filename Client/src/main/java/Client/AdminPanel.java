@@ -10,6 +10,7 @@ import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -114,11 +115,19 @@ public class AdminPanel extends JFrame implements ActionListener {
             //открыть расписание сеансов
         }
         if ((event.getSource() == createSession) && (filmsTable.getSelectedRow() != -1)){
-            AddingSessionDialog addingSessionDialog = new AddingSessionDialog((String) filmsTable.getValueAt(filmsTable.getSelectedRow(), 1), Integer.parseInt(filmsTable.getValueAt(filmsTable.getSelectedRow(), 0).toString()));
+            try {
+                AddingSessionDialog addingSessionDialog = new AddingSessionDialog((String) filmsTable.getValueAt(filmsTable.getSelectedRow(), 1), Integer.parseInt(filmsTable.getValueAt(filmsTable.getSelectedRow(), 0).toString()));
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
             //добавить сеанс
         }
         if (event.getSource() == addFilm){
-            AddingFilmDialog addFilmDialog = new AddingFilmDialog();
+            try {
+                AddingFilmDialog addFilmDialog = new AddingFilmDialog();
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
             this.dispose();
         }
     }

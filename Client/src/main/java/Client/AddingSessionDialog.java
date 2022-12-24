@@ -7,6 +7,7 @@ import forms.CreateSessionForm;
 import forms.TableChangeForm;
 
 import javax.swing.*;
+import javax.swing.text.MaskFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,13 +20,15 @@ import java.util.Locale;
 public class AddingSessionDialog extends JDialog implements ActionListener {
     ClientConnection Conn;
     private Gson gson;
+
     JLabel labelTitle, labelDate, labelTime, labelHall, msg;
-    JTextField title, dateField, timeField, hallField;
+    JFormattedTextField dateField, timeField;
+    JTextField hallField;
     JButton addingBtn, resetBtn;
 
     int film_idOfAddedSession;
 
-    AddingSessionDialog(String filmTitle, int film_id) {
+    AddingSessionDialog(String filmTitle, int film_id) throws ParseException {
         film_idOfAddedSession = film_id;
         this.setSize(500, 400);
         this.setTitle("Добавление");
@@ -52,12 +55,14 @@ public class AddingSessionDialog extends JDialog implements ActionListener {
         labelHall.setFont(new Font("Arial", Font.BOLD, 20));
         labelHall.setForeground(Color.black);
 
-        dateField = new JTextField();
+        MaskFormatter dateFormat = new MaskFormatter("##.##.####");
+        dateField = new JFormattedTextField(dateFormat);
         dateField.setBounds(250, 100, 200, 40);
         dateField.setFont(new Font("Arial", Font.BOLD, 20));
         dateField.setForeground(Color.black);
 
-        timeField = new JTextField();
+        MaskFormatter timeFormat = new MaskFormatter("##:##");
+        timeField = new JFormattedTextField(timeFormat);
         timeField.setBounds(250, 150, 200, 40);
         timeField.setFont(new Font("Arial", Font.BOLD, 20));
         timeField.setForeground(Color.black);
@@ -105,11 +110,12 @@ public class AddingSessionDialog extends JDialog implements ActionListener {
         if (evt.getSource() == addingBtn) {
             //добавить проверку на пустые поля и длину строки
             msg.setText("");
-            if (dateField.equals("")){
+            System.out.println(dateField.getText().length());
+            if (dateField.getText().contains(" ")){
                 msg.setText("Некорректная дата");
-            } else if (timeField.equals("")){
+            } else if (timeField.getText().contains(" ")){
                 msg.setText("Некорректное время");
-            } else if (hallField.equals("")){
+            } else if (!hallField.getText().matches("[-+]?\\d+") || hallField.getText().equals("") || (Integer.parseInt(hallField.getText()) > 2) || (Integer.parseInt(hallField.getText()) < 1)){ //todo количество залов будет больше
                 msg.setText("Некорректный зал");
             } else {
                 SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
@@ -137,7 +143,6 @@ public class AddingSessionDialog extends JDialog implements ActionListener {
             }
         }
         if (evt.getSource() == resetBtn) {
-            title.setText("");
             dateField.setText("");
             timeField.setText("");
             hallField.setText("");

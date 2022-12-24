@@ -6,17 +6,20 @@ import forms.AuthenticationForm;
 import forms.TableChangeForm;
 
 import javax.swing.*;
+import javax.swing.text.MaskFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
 
 public class AddingFilmDialog extends JDialog implements ActionListener {
     ClientConnection Conn;
     private Gson gson;
     JLabel labelTitle, labelGenre, labelCountry, labelYear, labelDuration, msg;
-    JTextField title, genre, country, year, duration;
-    JButton addingBtn, resetBtn;
-    AddingFilmDialog() {
+    JFormattedTextField year;
+    JTextField title, genre, country, duration;
+    JButton addingBtn, resetBtn, cancel;
+    AddingFilmDialog() throws ParseException {
         this.setSize(500, 500);
         this.setTitle("Добавление");
         this.setLocationRelativeTo(null);
@@ -62,7 +65,8 @@ public class AddingFilmDialog extends JDialog implements ActionListener {
         country.setFont(new Font("Arial", Font.BOLD, 20));
         country.setForeground(Color.black);
 
-        year = new JTextField();
+        MaskFormatter yearFormat = new MaskFormatter("####");
+        year = new JFormattedTextField(yearFormat);
         year.setBounds(200, 200, 250, 40);
         year.setFont(new Font("Arial", Font.BOLD, 20));
         year.setForeground(Color.black);
@@ -84,6 +88,13 @@ public class AddingFilmDialog extends JDialog implements ActionListener {
         addingBtn.setForeground(Color.black);
         addingBtn.addActionListener(this);
 
+        cancel = new JButton("Отмена");
+        cancel.setBounds(50, 400, 130, 40);
+        cancel.setFont(new Font("Arial", Font.BOLD, 16));
+        cancel.setBackground(Color.gray);
+        cancel.setForeground(Color.black);
+        cancel.addActionListener(this);
+
         resetBtn = new JButton("Сброс");
         resetBtn.setBounds(350, 350, 100, 40);
         resetBtn.setFont(new Font("Arial", Font.BOLD, 16));
@@ -103,6 +114,7 @@ public class AddingFilmDialog extends JDialog implements ActionListener {
         this.add(duration);
         this.add(msg);
         this.add(addingBtn);
+        this.add(cancel);
         this.add(resetBtn);
 
         this.setVisible(true);
@@ -113,15 +125,15 @@ public class AddingFilmDialog extends JDialog implements ActionListener {
         if (evt.getSource() == addingBtn) {
             //добавить проверку на пустые поля и длину строки
             msg.setText("");
-            if (title.equals("")){
+            if (title.getText().equals("")){
                 msg.setText("Некорректное название");
-            } else if (genre.equals("")){
+            } else if (genre.getText().equals("")){
                 msg.setText("Некорректный жанр");
-            } else if (country.equals("")){
+            } else if (country.getText().equals("")){
                 msg.setText("Некорректная страна");
-            } else if ((!year.getText().matches("[-+]?\\d+")) || (Integer.parseInt(year.getText()) > 2100) || (Integer.parseInt(year.getText()) < 1900)) {
+            } else if (year.getText().contains(" ") || (Integer.parseInt(year.getText()) > 2100) || (Integer.parseInt(year.getText()) < 1900)) {
                 msg.setText("Некорректный год");
-            } else if (!duration.getText().matches("[-+]?\\d+") || (Integer.parseInt(duration.getText()) > 720) || (Integer.parseInt(duration.getText()) < 1)){
+            } else if ((!duration.getText().matches("[-+]?\\d+")) || (Integer.parseInt(duration.getText()) > 720) || (Integer.parseInt(duration.getText()) < 1)){
                 msg.setText("Некорректная длительность");
             } else {
                 Film addedFilm = new Film(title.getText(), Integer.parseInt(year.getText()), genre.getText(), Integer.parseInt(duration.getText().toString()), country.getText());
@@ -136,6 +148,10 @@ public class AddingFilmDialog extends JDialog implements ActionListener {
                 this.dispose();
 
             }
+        }
+        if (evt.getSource() == cancel) {
+            AdminPanel adminPanel = new AdminPanel();
+            this.dispose();
         }
         if (evt.getSource() == resetBtn) {
             title.setText("");
