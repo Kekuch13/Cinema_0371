@@ -39,8 +39,8 @@ create table sessions
     time time,
     hall_id integer,
     film_id integer not null,
-    CONSTRAINT film_sess FOREIGN KEY(film_id) REFERENCES films(film_id),
-    CONSTRAINT hall_sess FOREIGN KEY(hall_id) REFERENCES halls(hall_id),
+    CONSTRAINT film_sess FOREIGN KEY(film_id) REFERENCES films(film_id) ON DELETE CASCADE,
+    CONSTRAINT hall_sess FOREIGN KEY(hall_id) REFERENCES halls(hall_id) ON DELETE CASCADE,
     PRIMARY KEY(date, time, hall_id)
 );
 
@@ -50,7 +50,7 @@ CREATE TABLE seats
     hall_id integer,
     row integer,
     seat integer,
-    CONSTRAINT hall_seats FOREIGN KEY(hall_id) REFERENCES halls(hall_id)
+    CONSTRAINT hall_seats FOREIGN KEY(hall_id) REFERENCES halls(hall_id) ON DELETE CASCADE
 );
 
 CREATE TABLE tickets
@@ -61,8 +61,8 @@ CREATE TABLE tickets
     time time,
     hall_id integer,
     is_sold bool DEFAULT false,
-    CONSTRAINT ticket_seat FOREIGN KEY(seat_id) REFERENCES seats(seat_id),
-    CONSTRAINT ticket_sess FOREIGN KEY(date, time, hall_id) REFERENCES sessions(date, time, hall_id)
+    CONSTRAINT ticket_seat FOREIGN KEY(seat_id) REFERENCES seats(seat_id) ON DELETE CASCADE,
+    CONSTRAINT ticket_sess FOREIGN KEY(date, time, hall_id) REFERENCES sessions(date, time, hall_id) ON DELETE CASCADE
 );
 
 INSERT INTO users(username, password, role)
