@@ -18,6 +18,7 @@ public class SessionsPanel extends JPanel  {
 
         sessionList = new JList<>();
         sessionList.setModel(sessionModel);
+        sessionList.setBackground(new Color(255, 178, 102));
         sessionList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
         sessionList.setFixedCellHeight(150);
         sessionList.setFixedCellWidth(195);
@@ -28,6 +29,7 @@ public class SessionsPanel extends JPanel  {
         film_title = new JLabel();
         film_title.setPreferredSize(new Dimension(100, 40));
 
+        this.setBackground(Color.lightGray);
         this.add(film_title);
         this.add(new JScrollPane(sessionList));
     }

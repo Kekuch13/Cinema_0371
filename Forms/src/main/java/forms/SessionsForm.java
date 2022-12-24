@@ -33,7 +33,6 @@ public class SessionsForm {
         this.film_id = film_id;
     }
 
-
     public ArrayList<Session> getSessions() {
         return sessions;
     }

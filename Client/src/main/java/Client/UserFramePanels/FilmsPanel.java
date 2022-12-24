@@ -15,8 +15,7 @@ public class FilmsPanel extends JPanel  {
 
         filmList = new JList<>();
         filmList.setModel(filmsModel);
-        filmList.setSelectionBackground(Color.yellow);
-        filmList.setBackground(Color.pink);
+        filmList.setBackground(new Color(255, 178, 102));
         filmList.setModel(filmsModel);
         filmList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
         filmList.setFixedCellHeight(150);

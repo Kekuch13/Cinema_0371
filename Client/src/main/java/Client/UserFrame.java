@@ -6,6 +6,7 @@ import Entities.Session;
 import com.google.gson.Gson;
 import forms.FilmsForm;
 import forms.SessionsForm;
+import forms.TicketsForm;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -20,8 +21,8 @@ public class UserFrame extends JFrame {
     private final JPanel mainPanel;
     private final FilmsPanel filmsPanel;
     private final SessionsPanel sessionsPanel;
-    private TicketsPanel ticketsPanel;
-    private final JButton btn2;
+    private final TicketsPanel ticketsPanel;
+    private final JButton btn1, btn2;
     private final CardLayout cl = new CardLayout();
 
     // Films
@@ -35,15 +36,25 @@ public class UserFrame extends JFrame {
         mainPanel.setSize(800, 600);
         mainPanel.setLayout(cl);
 
-        btn2 = new JButton("Back");
-        btn2.setPreferredSize(new Dimension(100, 40));
-        btn2.setFont(new Font("Arial", Font.BOLD, 16));
-        btn2.setBackground(Color.white);
-        btn2.setForeground(Color.black);
+        btn1 = new JButton("Back");
+        btn1.setPreferredSize(new Dimension(100, 40));
+        btn1.setFont(new Font("Arial", Font.BOLD, 16));
+        btn1.setBackground(Color.white);
+        btn1.setForeground(Color.black);
 
         sessionsPanel = new SessionsPanel();
         sessionsPanel.setBackground(Color.white);
-        sessionsPanel.add(btn2);
+        sessionsPanel.add(btn1);
+
+        btn2 = new JButton("Back");
+        btn2.setBounds(500, 500, 100, 40);
+        btn2.setFont(new Font("Arial", Font.BOLD, 16));
+        btn2.setBackground(Color.red);
+        btn2.setForeground(Color.black);
+
+        ticketsPanel = new TicketsPanel();
+        ticketsPanel.setBackground(Color.white);
+        ticketsPanel.add(btn2);
 
         filmsPanel = new FilmsPanel();
         FilmsForm filmsForm = getFilmsForm();
@@ -68,18 +79,31 @@ public class UserFrame extends JFrame {
                 }
             }
         });
+        sessionsPanel.sessionList.getSelectionModel().addListSelectionListener(e -> {
+            if(!e.getValueIsAdjusting()) {
+                Session session = sessionsPanel.sessionList.getSelectedValue();
+                if(session != null) {
 
-        btn2.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                cl.show(mainPanel, "1");
-                int idx = filmsPanel.filmList.getSelectedIndex();
-                filmsPanel.filmList.removeSelectionInterval(idx, idx);
+                    cl.show(mainPanel, "3");
+                }
             }
+        });
+
+        btn1.addActionListener(arg0 -> {
+            cl.show(mainPanel, "1");
+            int idx = filmsPanel.filmList.getSelectedIndex();
+            filmsPanel.filmList.removeSelectionInterval(idx, idx);
+        });
+
+        btn2.addActionListener(e -> {
+            cl.show(mainPanel, "2");
+            int idx = sessionsPanel.sessionList.getSelectedIndex();
+            sessionsPanel.sessionList.removeSelectionInterval(idx, idx);
         });
 
         mainPanel.add(filmsPanel, "1");
         mainPanel.add(sessionsPanel, "2");
+        mainPanel.add(ticketsPanel, "3");
         cl.show(mainPanel, "1");
 
         this.getContentPane().add(mainPanel);
@@ -103,14 +127,21 @@ public class UserFrame extends JFrame {
 
     public SessionsForm getSessionsForm (Film film) {
         SessionsForm sessionsForm = new SessionsForm(film.getFilm_id(), null);
-        String json1 = gson.toJson(sessionsForm);
-        Conn.sendToServer(json1);
-        String line1 = Conn.receiveFromServer();
-        sessionsForm = gson.fromJson(line1, SessionsForm.class);
+        String json = gson.toJson(sessionsForm);
+        Conn.sendToServer(json);
+        String line = Conn.receiveFromServer();
+        sessionsForm = gson.fromJson(line, SessionsForm.class);
 
         return sessionsForm;
     }
 
-    // getTickets - обновляем под каждый сеанс билеты
+    public TicketsForm getTicketsForm (Session session) {
+        TicketsForm ticketsForm = new TicketsForm(session.getDate(), session.getTime(), session.getHall_id(), null);
+        String json = gson.toJson(ticketsForm);
+        Conn.sendToServer(json);
+        String line = Conn.receiveFromServer();
+        ticketsForm = gson.fromJson(line, TicketsForm.class);
 
+        return ticketsForm;
+    }
 }
