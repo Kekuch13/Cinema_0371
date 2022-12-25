@@ -19,7 +19,7 @@ public class FilmsPanel extends JPanel  {
         filmList.setModel(filmsModel);
         filmList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
         filmList.setFixedCellHeight(150);
-        filmList.setFixedCellWidth(195);
+        filmList.setFixedCellWidth(192);
         filmList.setVisibleRowCount(0);
         DefaultListCellRenderer renderer =  (DefaultListCellRenderer) filmList.getCellRenderer();
         renderer.setHorizontalAlignment(JLabel.CENTER);
