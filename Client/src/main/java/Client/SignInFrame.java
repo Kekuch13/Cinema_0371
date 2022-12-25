@@ -10,14 +10,18 @@ import java.awt.event.ActionListener;
 import java.util.Objects;
 
 public class SignInFrame extends JFrame implements ActionListener {
-    private JPasswordField password;
-    private JTextField username;
-    private JLabel labelPassword, labelUsername, message, title;
-    private JButton btn, resetBtn;
-    private JCheckBox showPassword;
-    private ClientConnection Conn;
+    private final JPasswordField password;
+    private final JTextField username;
+    private final JLabel labelPassword;
+    private final JLabel labelUsername;
+    private final JLabel message;
+    private final JLabel title;
+    private final JButton btn;
+    private final JButton resetBtn;
+    private final JCheckBox showPassword;
+    private final ClientConnection Conn;
     private AuthenticationForm authForm;
-    private Gson gson;
+    private final Gson gson;
 
     SignInFrame() {
         gson = new Gson();
@@ -108,7 +112,7 @@ public class SignInFrame extends JFrame implements ActionListener {
 
             String msg;
             if (authForm.isValid) {
-                if (Objects.equals(authForm.getRole(), "USER")){
+                if (Objects.equals(authForm.getRole(), "USER")) {
                     UserFrame userFrame = new UserFrame();
                 } else {
                     AdminPanel adminPanel = new AdminPanel();

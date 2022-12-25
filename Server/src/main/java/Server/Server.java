@@ -1,12 +1,16 @@
 package Server;
 
-import Entities.*;
-import forms.*;
+import Entities.Film;
+import Entities.Session;
+import Entities.Ticket;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import forms.*;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.*;
@@ -18,10 +22,10 @@ public class Server {
     private final int port;
     private final Socket socket;
     private final ServerSocket server;
-    private DataOutputStream dataOutputStream;
-    private DataInputStream dataInputStream;
+    private final DataOutputStream dataOutputStream;
+    private final DataInputStream dataInputStream;
     private DatabaseManager databaseManager;
-    private Gson gson;
+    private final Gson gson;
 
     public Server(int port) {
         this.gson = new Gson();
@@ -173,12 +177,12 @@ public class Server {
 
             String query =
                     "select date, time, sessions.hall_id, sessions.film_id, duration, name AS hall_name\n" +
-                    "from sessions\n" +
-                    "    inner join films f on f.film_id = sessions.film_id\n" +
-                    "    inner join halls h on h.hall_id = sessions.hall_id\n" +
-                    "where f.film_id = " + String.valueOf(sessionsForm.getFilm_id());
+                            "from sessions\n" +
+                            "    inner join films f on f.film_id = sessions.film_id\n" +
+                            "    inner join halls h on h.hall_id = sessions.hall_id\n" +
+                            "where f.film_id = " + sessionsForm.getFilm_id();
             ResultSet rs = st.executeQuery(query);
-            while(rs.next()) {
+            while (rs.next()) {
                 Date date = rs.getDate("date");
                 Time time = rs.getTime("time");
                 int hall_id = rs.getInt("hall_id");
@@ -208,11 +212,11 @@ public class Server {
             Connection conn = DatabaseManager.getInstance().getConnection();
             Statement st = conn.createStatement();
 
-            String query = "select * from tickets where date = '" + String.valueOf(ticketsForm.getDate()) + "'" +
-                    "AND time = '" + String.valueOf(ticketsForm.getTime()) + "'" + "AND hall_id = " +
+            String query = "select * from tickets where date = '" + ticketsForm.getDate() + "'" +
+                    "AND time = '" + ticketsForm.getTime() + "'" + "AND hall_id = " +
                     ticketsForm.getHall_id() + "order by seat_id ASC";
             ResultSet rs = st.executeQuery(query);
-            while(rs.next()) {
+            while (rs.next()) {
                 int ticket_id = rs.getInt("ticket_id");
                 int seat_id = rs.getInt("seat_id");
                 Date date = rs.getDate("date");
@@ -230,7 +234,7 @@ public class Server {
         sendToClient(json);
     }
 
-    private void booking (String line) {
+    private void booking(String line) {
         BookingForm bookingForm = gson.fromJson(line, BookingForm.class);
         try {
             Connection conn = DatabaseManager.getInstance().getConnection();
@@ -258,7 +262,6 @@ public class Server {
                 arrayOfId[0] = '(';
                 arrayOfId[arrayOfId.length - 1] = ')';
                 String query = "DELETE FROM films WHERE film_id IN " + String.valueOf(arrayOfId);
-                System.out.println(query);
 
                 int rs = st.executeUpdate(query);
 
@@ -272,7 +275,6 @@ public class Server {
                 Film film = tableChangeForm.film;
 
                 String query = "INSERT INTO films VALUES (default, '" + film.getTitle() + "', '" + film.getYear() + "', '" + film.getGenre() + "', '" + film.getDuration() + "', '" + film.getCountry() + "')";
-                System.out.println(query);
 
                 int rs = st.executeUpdate(query);
 
@@ -295,7 +297,6 @@ public class Server {
             query += "select seat_id, date, time, s.hall_id\n" +
                     "from sessions inner join seats s on sessions.hall_id = s.hall_id\n" +
                     "where sessions.hall_id = " + addedSession.getHall_id() + " and sessions.date = '" + addedSession.getDate() + "' and sessions.time = '" + addedSession.getTime() + "';\n";
-            System.out.println(query);
 
             int rs = st.executeUpdate(query);
 
@@ -304,7 +305,7 @@ public class Server {
         }
     }
 
-    public void deleteSession(String line){
+    public void deleteSession(String line) {
         DeleteSessionForm deleteSessionForm = gson.fromJson(line, DeleteSessionForm.class);
 
         try {
@@ -316,7 +317,6 @@ public class Server {
             int hall_id = deleteSessionForm.getHall_id();
 
             String query = "DELETE from sessions WHERE date = '" + date + "' and time = '" + time + "' and hall_id = '" + hall_id + "';\n";
-            System.out.println(query);
 
             int rs = st.executeUpdate(query);
 

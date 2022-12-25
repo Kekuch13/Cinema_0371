@@ -8,6 +8,12 @@ public class AuthenticationForm {
 
     public String role;
 
+    public AuthenticationForm(String login, String password, boolean isValid) {
+        this.login = login;
+        this.password = password;
+        this.isValid = isValid;
+    }
+
     public String getForm() {
         return form;
     }
@@ -42,12 +48,6 @@ public class AuthenticationForm {
 
     public void setRole(String role) {
         this.role = role;
-    }
-
-    public AuthenticationForm(String login, String password, boolean isValid) {
-        this.login = login;
-        this.password = password;
-        this.isValid = isValid;
     }
 
     @Override

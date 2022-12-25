@@ -1,6 +1,8 @@
 package Client;
 
-import Client.AdminFramePanels.*;
+import Client.AdminFramePanels.AddingFilmDialog;
+import Client.AdminFramePanels.AddingSessionDialog;
+import Client.AdminFramePanels.SessionsAdminFrame;
 import Client.AdminFramePanels.TableModels.FilmsTableModel;
 import Entities.Film;
 import com.google.gson.Gson;
@@ -18,18 +20,14 @@ import java.util.ArrayList;
 public class AdminPanel extends JFrame implements ActionListener {
 
     ClientConnection Conn;
-    private Gson gson;
-
     JTable filmsTable;
     JButton schedule, addFilm, deleteFilm, createSession;
-
     FilmsForm filmsForm;
-
     FilmsTableModel ftm = new FilmsTableModel();
-
     ArrayList<Film> filmsFormList;
+    private final Gson gson;
 
-    public AdminPanel(){
+    public AdminPanel() {
         Conn = ClientConnection.instance;
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -107,7 +105,7 @@ public class AdminPanel extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent event) {
-        if ((event.getSource() == deleteFilm) && (filmsTable.getSelectedRow() != -1)){
+        if ((event.getSource() == deleteFilm) && (filmsTable.getSelectedRow() != -1)) {
             int[] setOfID = ftm.getSelectedID(filmsTable.getSelectedRows());
 
             TableChangeForm tableChangeForm = new TableChangeForm("delete", setOfID);
@@ -116,7 +114,7 @@ public class AdminPanel extends JFrame implements ActionListener {
             AdminPanel adminFrame = new AdminPanel();
             this.dispose();
         }
-        if ((event.getSource() == createSession) && (filmsTable.getSelectedRow() != -1)){
+        if ((event.getSource() == createSession) && (filmsTable.getSelectedRow() != -1)) {
             try {
                 AddingSessionDialog addingSessionDialog = new AddingSessionDialog((String) filmsTable.getValueAt(filmsTable.getSelectedRow(), 1), Integer.parseInt(filmsTable.getValueAt(filmsTable.getSelectedRow(), 0).toString()));
             } catch (ParseException e) {
@@ -124,7 +122,7 @@ public class AdminPanel extends JFrame implements ActionListener {
             }
             //добавить сеанс
         }
-        if (event.getSource() == addFilm){
+        if (event.getSource() == addFilm) {
             try {
                 AddingFilmDialog addFilmDialog = new AddingFilmDialog();
             } catch (ParseException e) {
@@ -132,7 +130,7 @@ public class AdminPanel extends JFrame implements ActionListener {
             }
             this.dispose();
         }
-        if ((event.getSource() == schedule) && (filmsTable.getSelectedRow() != -1)){
+        if ((event.getSource() == schedule) && (filmsTable.getSelectedRow() != -1)) {
             SessionsAdminFrame sessionsAdminFrame = new SessionsAdminFrame(new Film(filmsFormList.get(filmsTable.getSelectedRow()).getFilm_id(), filmsFormList.get(filmsTable.getSelectedRow()).getTitle(), filmsFormList.get(filmsTable.getSelectedRow()).getDuration()));
             this.dispose();
         }

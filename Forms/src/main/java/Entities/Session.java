@@ -1,7 +1,7 @@
 package Entities;
 
-import java.sql.Time;
 import java.sql.Date;
+import java.sql.Time;
 
 public class Session {
     private Date date;
