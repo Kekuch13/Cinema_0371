@@ -50,6 +50,6 @@ public class SessionsPanel extends JPanel  {
 
     public void setFilm(Film film) {
         this.film = film;
-        film_title.setText(film.getTitle());
+        film_title.setText(film.getTitle() + " (" + film.getDuration() + " мин)");
     }
 }
