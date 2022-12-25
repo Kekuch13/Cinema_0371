@@ -69,6 +69,10 @@ public class Server {
                     break;
                 case "sessions":
                     sessionsList(line);
+                    break;
+                case "booking":
+                    booking(line);
+                    break;
                 case "ChangeTable":
                     changeTable(line);
                     break;
@@ -189,7 +193,7 @@ public class Server {
 
             String query = "select * from tickets where date = '" + String.valueOf(ticketsForm.getDate()) + "'" +
                     "AND time = '" + String.valueOf(ticketsForm.getTime()) + "'" + "AND hall_id = " +
-                    ticketsForm.getHall_id();
+                    ticketsForm.getHall_id() + "order by seat_id ASC";
             ResultSet rs = st.executeQuery(query);
             while(rs.next()) {
                 int ticket_id = rs.getInt("ticket_id");
@@ -207,6 +211,23 @@ public class Server {
         ticketsForm.setTickets(ticketsList);
         String json = gson.toJson(ticketsForm);
         sendToClient(json);
+    }
+
+    private void booking (String line) {
+        BookingForm bookingForm = gson.fromJson(line, BookingForm.class);
+        try {
+            Connection conn = DatabaseManager.getInstance().getConnection();
+            Statement st = conn.createStatement();
+
+            char[] arrayOfId = bookingForm.getTickets_ids().toString().toCharArray();
+            arrayOfId[0] = '(';
+            arrayOfId[arrayOfId.length - 1] = ')';
+
+            String query = "UPDATE tickets SET is_sold = TRUE WHERE ticket_id IN " + String.valueOf(arrayOfId);
+            int rs = st.executeUpdate(query);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void changeTable(String line) {
