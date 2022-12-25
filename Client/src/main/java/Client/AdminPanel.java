@@ -111,9 +111,6 @@ public class AdminPanel extends JFrame implements ActionListener {
             AdminPanel adminFrame = new AdminPanel();
             this.dispose();
         }
-        if ((event.getSource() == schedule) && (filmsTable.getSelectedRow() != -1)){
-            //открыть расписание сеансов
-        }
         if ((event.getSource() == createSession) && (filmsTable.getSelectedRow() != -1)){
             try {
                 AddingSessionDialog addingSessionDialog = new AddingSessionDialog((String) filmsTable.getValueAt(filmsTable.getSelectedRow(), 1), Integer.parseInt(filmsTable.getValueAt(filmsTable.getSelectedRow(), 0).toString()));
@@ -130,7 +127,7 @@ public class AdminPanel extends JFrame implements ActionListener {
             }
             this.dispose();
         }
-        if (event.getSource() == schedule){
+        if ((event.getSource() == schedule) && (filmsTable.getSelectedRow() != -1)){
             SessionsAdminFrame sessionsAdminFrame = new SessionsAdminFrame(Integer.parseInt(filmsTable.getValueAt(filmsTable.getSelectedRow(), 0).toString()), filmsTable.getValueAt(filmsTable.getSelectedRow(), 1).toString());
             this.dispose();
         }

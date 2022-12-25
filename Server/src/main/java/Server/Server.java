@@ -75,6 +75,9 @@ public class Server {
                 case "CreateSession":
                     createSession(line);
                     break;
+                case "DeleteSession":
+                    deleteSession(line);
+                    break;
                 case "exit":
                     System.out.println("Closing connection");
                     try {
@@ -266,7 +269,32 @@ public class Server {
             Statement st = conn.createStatement();
 
             Session addedSession = createSessionForm.getSession();
-            String query = "INSERT INTO sessions VALUES ('" + addedSession.getDate() + "', '" + addedSession.getTime() + "', '" + addedSession.getHall_id() + "', '" + addedSession.getFilm_id() + "')";
+            String query = "INSERT INTO sessions VALUES ('" + addedSession.getDate() + "', '" + addedSession.getTime() + "', '" + addedSession.getHall_id() + "', '" + addedSession.getFilm_id() + "');\n";
+            query += "INSERT INTO tickets (seat_id, date, time, hall_id)\n";
+            query += "select seat_id, date, time, s.hall_id\n" +
+                    "from sessions inner join seats s on sessions.hall_id = s.hall_id\n" +
+                    "where sessions.hall_id = " + addedSession.getHall_id() + " and sessions.date = '" + addedSession.getDate() + "' and sessions.time = '" + addedSession.getTime() + "';\n";
+            System.out.println(query);
+
+            int rs = st.executeUpdate(query);
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void deleteSession(String line){
+        DeleteSessionForm deleteSessionForm = gson.fromJson(line, DeleteSessionForm.class);
+
+        try {
+            Connection conn = DatabaseManager.getInstance().getConnection();
+            Statement st = conn.createStatement();
+
+            Date date = deleteSessionForm.getDate();
+            Time time = deleteSessionForm.getTime();
+            int hall_id = deleteSessionForm.getHall_id();
+
+            String query = "DELETE from sessions WHERE date = '" + date + "' and time = '" + time + "' and hall_id = '" + hall_id + "';\n";
             System.out.println(query);
 
             int rs = st.executeUpdate(query);

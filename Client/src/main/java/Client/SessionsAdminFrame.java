@@ -3,6 +3,7 @@ package Client;
 import Entities.Film;
 import Entities.Session;
 import com.google.gson.Gson;
+import forms.DeleteSessionForm;
 import forms.FilmsForm;
 import forms.SessionsForm;
 
@@ -10,6 +11,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Date;
+import java.sql.Time;
 import java.util.ArrayList;
 
 public class SessionsAdminFrame extends JFrame implements ActionListener {
@@ -19,11 +22,15 @@ public class SessionsAdminFrame extends JFrame implements ActionListener {
     JTable sessionsTable;
     SessionsTableModel stm = new SessionsTableModel();
 
-
+    int deletedSessionFilm_id;
+    String deletedSessionFilmTitle;
     JLabel titleLabel, durLabel;
     JButton backward, deleteBtn;
 
     SessionsAdminFrame(int film_id, String filmTitle) {
+        deletedSessionFilm_id = film_id;
+        deletedSessionFilmTitle = filmTitle;
+
         Conn = ClientConnection.instance;
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -93,6 +100,20 @@ public class SessionsAdminFrame extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent evt) {
         if (evt.getSource() == backward) {
             AdminPanel adminPanel = new AdminPanel();
+            this.dispose();
+        }
+        if (evt.getSource() == deleteBtn){
+            String hall = stm.getValueAt(sessionsTable.getSelectedRow(), 2).toString();
+            DeleteSessionForm deleteSessionForm = new DeleteSessionForm(
+                    java.sql.Date.valueOf(stm.getValueAt(sessionsTable.getSelectedRow(), 0).toString()),
+                    java.sql.Time.valueOf(stm.getValueAt(sessionsTable.getSelectedRow(), 1).toString()),
+                    Integer.parseInt(hall.substring(0, hall.indexOf(':')))
+            );
+            gson = new Gson();
+            Conn = ClientConnection.instance;
+            String json = gson.toJson(deleteSessionForm);
+            Conn.sendToServer(json);
+            SessionsAdminFrame sessionsAdminFrame = new SessionsAdminFrame(deletedSessionFilm_id, deletedSessionFilmTitle);
             this.dispose();
         }
     }
