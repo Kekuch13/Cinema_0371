@@ -80,7 +80,7 @@ public class UserFrame extends JFrame {
         });
         ticketsPanel.save.addActionListener(e -> {
             int op = JOptionPane.showConfirmDialog(ticketsPanel, "Вы уверены?", "Подтверждение", JOptionPane.YES_NO_OPTION);
-            if(op == 0) {
+            if(op == 0 && !ticketsPanel.selected.isEmpty()) {
                 bookTickets(ticketsPanel.selected);
                 cl.show(mainPanel, "1");
                 int idx = filmsPanel.filmList.getSelectedIndex();
