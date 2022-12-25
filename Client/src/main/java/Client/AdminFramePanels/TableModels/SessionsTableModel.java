@@ -4,12 +4,12 @@ import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 
 public class SessionsTableModel extends AbstractTableModel {
-    private int columnCount = 3;
-    private ArrayList<String []> dataArrayList;
+    private final int columnCount = 3;
+    private final ArrayList<String[]> dataArrayList;
 
     public SessionsTableModel() {
-        dataArrayList = new ArrayList<String []>();
-        for (int i = 0; i < dataArrayList.size(); i++){
+        dataArrayList = new ArrayList<String[]>();
+        for (int i = 0; i < dataArrayList.size(); i++) {
             dataArrayList.add(new String[getColumnCount()]);
         }
     }
@@ -25,11 +25,14 @@ public class SessionsTableModel extends AbstractTableModel {
     }
 
     @Override
-    public String getColumnName(int columnIndex){
-        switch (columnIndex){
-            case 0: return "Дата";
-            case 1: return "Время начала";
-            case 2: return "Зал";
+    public String getColumnName(int columnIndex) {
+        switch (columnIndex) {
+            case 0:
+                return "Дата";
+            case 1:
+                return "Время начала";
+            case 2:
+                return "Зал";
         }
         return "";
     }
@@ -42,14 +45,14 @@ public class SessionsTableModel extends AbstractTableModel {
 
     public int[] getSelectedID(int[] selectedRows) {
         int[] selectedID = new int[selectedRows.length];
-        for (int i = 0; i < selectedRows.length; i++){
+        for (int i = 0; i < selectedRows.length; i++) {
             selectedID[i] = Integer.parseInt(getValueAt(selectedRows[i], 0).toString());
         }
         return selectedID;
     }
 
-    public void addData(String [] row){
-        String [] rowTable = new String[getColumnCount()];
+    public void addData(String[] row) {
+        String[] rowTable = new String[getColumnCount()];
         rowTable = row;
         dataArrayList.add(rowTable);
     }

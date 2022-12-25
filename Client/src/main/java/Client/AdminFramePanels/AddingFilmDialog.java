@@ -4,7 +4,6 @@ import Client.AdminPanel;
 import Client.ClientConnection;
 import Entities.Film;
 import com.google.gson.Gson;
-import forms.AuthenticationForm;
 import forms.TableChangeForm;
 
 import javax.swing.*;
@@ -16,11 +15,12 @@ import java.text.ParseException;
 
 public class AddingFilmDialog extends JDialog implements ActionListener {
     ClientConnection Conn;
-    private Gson gson;
     JLabel labelTitle, labelGenre, labelCountry, labelYear, labelDuration, msg;
     JFormattedTextField year;
     JTextField title, genre, country, duration;
     JButton addingBtn, resetBtn, cancel;
+    private Gson gson;
+
     public AddingFilmDialog() throws ParseException {
         this.setSize(500, 500);
         this.setTitle("Добавление");
@@ -127,18 +127,18 @@ public class AddingFilmDialog extends JDialog implements ActionListener {
         if (evt.getSource() == addingBtn) {
             //добавить проверку на пустые поля и длину строки
             msg.setText("");
-            if (title.getText().equals("")){
+            if (title.getText().equals("")) {
                 msg.setText("Некорректное название");
-            } else if (genre.getText().equals("")){
+            } else if (genre.getText().equals("")) {
                 msg.setText("Некорректный жанр");
-            } else if (country.getText().equals("")){
+            } else if (country.getText().equals("")) {
                 msg.setText("Некорректная страна");
             } else if (year.getText().contains(" ") || (Integer.parseInt(year.getText()) > 2100) || (Integer.parseInt(year.getText()) < 1900)) {
                 msg.setText("Некорректный год");
-            } else if ((!duration.getText().matches("[-+]?\\d+")) || (Integer.parseInt(duration.getText()) > 720) || (Integer.parseInt(duration.getText()) < 1)){
+            } else if ((!duration.getText().matches("[-+]?\\d+")) || (Integer.parseInt(duration.getText()) > 720) || (Integer.parseInt(duration.getText()) < 1)) {
                 msg.setText("Некорректная длительность");
             } else {
-                Film addedFilm = new Film(title.getText(), Integer.parseInt(year.getText()), genre.getText(), Integer.parseInt(duration.getText().toString()), country.getText());
+                Film addedFilm = new Film(title.getText(), Integer.parseInt(year.getText()), genre.getText(), Integer.parseInt(duration.getText()), country.getText());
                 TableChangeForm tableChangeForm = new TableChangeForm("add", addedFilm);
 
                 gson = new Gson();

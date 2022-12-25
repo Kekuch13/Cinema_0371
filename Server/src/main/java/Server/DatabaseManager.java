@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class DatabaseManager {
     private static DatabaseManager dm;
-    private Connection conn;
+    private final Connection conn;
 
     private DatabaseManager() {
         try {
@@ -22,7 +22,7 @@ public class DatabaseManager {
         String login = dbConf.getLogin();
         String password = dbConf.getPassword();
         try {
-            conn = DriverManager.getConnection("jdbc:postgresql://"+ host + ":" + port  + "/" + base, login, password);
+            conn = DriverManager.getConnection("jdbc:postgresql://" + host + ":" + port + "/" + base, login, password);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -35,7 +35,7 @@ public class DatabaseManager {
         return dm;
     }
 
-    public Connection getConnection(){
+    public Connection getConnection() {
         return conn;
     }
 }

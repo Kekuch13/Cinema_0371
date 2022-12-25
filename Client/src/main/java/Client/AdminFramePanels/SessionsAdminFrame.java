@@ -17,14 +17,12 @@ import java.util.ArrayList;
 
 public class SessionsAdminFrame extends JFrame implements ActionListener {
     ClientConnection Conn;
-    private Gson gson;
-
     JTable sessionsTable;
     SessionsTableModel stm = new SessionsTableModel();
-
     Film deletedSessionFilm;
     JLabel titleLabel, durLabel;
     JButton backward, deleteBtn;
+    private Gson gson;
 
     public SessionsAdminFrame(Film film) {
         deletedSessionFilm = film;
@@ -66,7 +64,7 @@ public class SessionsAdminFrame extends JFrame implements ActionListener {
         titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
         titleLabel.setForeground(Color.black);
 
-        durLabel = new JLabel("Длительность: " + sessionsForm.getDuration()/60 + " ч " + sessionsForm.getDuration()%60 + " мин");
+        durLabel = new JLabel("Длительность: " + sessionsForm.getDuration() / 60 + " ч " + sessionsForm.getDuration() % 60 + " мин");
         durLabel.setBounds(20, 70, 250, 40);
         durLabel.setFont(new Font("Arial", Font.BOLD, 16));
         durLabel.setForeground(Color.black);
@@ -101,7 +99,7 @@ public class SessionsAdminFrame extends JFrame implements ActionListener {
             AdminPanel adminPanel = new AdminPanel();
             this.dispose();
         }
-        if (evt.getSource() == deleteBtn){
+        if (evt.getSource() == deleteBtn) {
             String hall = stm.getValueAt(sessionsTable.getSelectedRow(), 2).toString();
             DeleteSessionForm deleteSessionForm = new DeleteSessionForm(
                     java.sql.Date.valueOf(stm.getValueAt(sessionsTable.getSelectedRow(), 0).toString()),

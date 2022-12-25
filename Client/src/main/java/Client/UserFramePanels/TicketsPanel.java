@@ -6,20 +6,17 @@ import Entities.Ticket;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class TicketsPanel extends JPanel {
-    Film film;
-    Session session;
-    JLabel film_title, session_title, screen;
     public JButton back, save;
     public Map<JButton, Ticket> ticketsBtns = new LinkedHashMap<JButton, Ticket>();
     public ArrayList<Integer> selected = new ArrayList<Integer>();
+    Film film;
+    Session session;
+    JLabel film_title, session_title, screen;
 
 
     public TicketsPanel() {
@@ -28,7 +25,7 @@ public class TicketsPanel extends JPanel {
         this.setBackground(new Color(255, 178, 102));
 
         for (int i = 0; i < 5; ++i) {
-            JLabel row = new JLabel("ряд " + String.valueOf(i+1));
+            JLabel row = new JLabel("ряд " + (i + 1));
             row.setBounds(105, i * 50 + 170, 60, 40);
             row.setFont(new Font("Arial", Font.BOLD, 16));
             this.add(row);
@@ -37,10 +34,10 @@ public class TicketsPanel extends JPanel {
                 btn.setBounds(j * 50 + 165, i * 50 + 170, 40, 40);
                 btn.setBackground(new Color(65, 65, 255));
                 btn.addActionListener(e -> {
-                    if(!ticketsBtns.get(btn).is_sold()) {
-                        if(selected.contains(ticketsBtns.get(btn).getTicket_id())) {
+                    if (!ticketsBtns.get(btn).is_sold()) {
+                        if (selected.contains(ticketsBtns.get(btn).getTicket_id())) {
                             btn.setBackground(new Color(65, 65, 255));
-                            selected.remove(selected.indexOf(ticketsBtns.get(btn).getTicket_id()));
+                            selected.remove((Integer) ticketsBtns.get(btn).getTicket_id());
                         } else {
                             btn.setBackground(new Color(55, 255, 0));
                             selected.add(ticketsBtns.get(btn).getTicket_id());
@@ -51,8 +48,8 @@ public class TicketsPanel extends JPanel {
                 this.add(btn);
             }
         }
-        for(int i = 0; i < 10; ++i) {
-            JLabel col = new JLabel(String.valueOf(i+1), SwingConstants.CENTER);
+        for (int i = 0; i < 10; ++i) {
+            JLabel col = new JLabel(String.valueOf(i + 1), SwingConstants.CENTER);
             col.setBounds(i * 50 + 165, 410, 40, 40);
             col.setFont(new Font("Arial", Font.BOLD, 16));
             this.add(col);

@@ -6,12 +6,12 @@ import Entities.Session;
 import javax.swing.*;
 import java.awt.*;
 
-public class SessionsPanel extends JPanel  {
-    private Film film;
+public class SessionsPanel extends JPanel {
     public JList<Session> sessionList;
     public DefaultListModel<Session> sessionModel = new DefaultListModel<>();
     public JLabel film_title;
     public JButton back;
+    private Film film;
 
     public SessionsPanel() {
         this.setSize(800, 600);

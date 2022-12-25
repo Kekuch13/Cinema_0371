@@ -1,11 +1,9 @@
 package Client.AdminFramePanels;
 
 import Client.ClientConnection;
-import Entities.Film;
 import Entities.Session;
 import com.google.gson.Gson;
 import forms.CreateSessionForm;
-import forms.TableChangeForm;
 
 import javax.swing.*;
 import javax.swing.text.MaskFormatter;
@@ -16,18 +14,15 @@ import java.sql.Date;
 import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Locale;
 
 public class AddingSessionDialog extends JDialog implements ActionListener {
     ClientConnection Conn;
-    private Gson gson;
-
     JLabel labelTitle, labelDate, labelTime, labelHall, msg;
     JFormattedTextField dateField, timeField;
     JTextField hallField;
     JButton addingBtn, resetBtn;
-
     int film_idOfAddedSession;
+    private Gson gson;
 
     public AddingSessionDialog(String filmTitle, int film_id) throws ParseException {
         film_idOfAddedSession = film_id;
@@ -111,12 +106,11 @@ public class AddingSessionDialog extends JDialog implements ActionListener {
         if (evt.getSource() == addingBtn) {
             //добавить проверку на пустые поля и длину строки
             msg.setText("");
-            System.out.println(dateField.getText().length());
-            if (dateField.getText().contains(" ")){
+            if (dateField.getText().contains(" ")) {
                 msg.setText("Некорректная дата");
-            } else if (timeField.getText().contains(" ")){
+            } else if (timeField.getText().contains(" ")) {
                 msg.setText("Некорректное время");
-            } else if (!hallField.getText().matches("[-+]?\\d+") || hallField.getText().equals("") || (Integer.parseInt(hallField.getText()) > 4) || (Integer.parseInt(hallField.getText()) < 1)){ //todo количество залов будет больше
+            } else if (!hallField.getText().matches("[-+]?\\d+") || hallField.getText().equals("") || (Integer.parseInt(hallField.getText()) > 4) || (Integer.parseInt(hallField.getText()) < 1)) { //todo количество залов будет больше
                 msg.setText("Некорректный зал");
             } else {
                 SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");

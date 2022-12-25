@@ -5,7 +5,7 @@ import Entities.Film;
 import javax.swing.*;
 import java.awt.*;
 
-public class FilmsPanel extends JPanel  {
+public class FilmsPanel extends JPanel {
     public JList<Film> filmList;
     public DefaultListModel<Film> filmsModel = new DefaultListModel<>();
 
@@ -21,7 +21,7 @@ public class FilmsPanel extends JPanel  {
         filmList.setFixedCellHeight(150);
         filmList.setFixedCellWidth(192);
         filmList.setVisibleRowCount(0);
-        DefaultListCellRenderer renderer =  (DefaultListCellRenderer) filmList.getCellRenderer();
+        DefaultListCellRenderer renderer = (DefaultListCellRenderer) filmList.getCellRenderer();
         renderer.setHorizontalAlignment(JLabel.CENTER);
 
         this.add(new JScrollPane(filmList));
