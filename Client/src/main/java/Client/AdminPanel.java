@@ -1,18 +1,19 @@
 package Client;
 
+import Client.AdminFramePanels.*;
+import Client.AdminFramePanels.TableModels.FilmsTableModel;
 import Entities.Film;
 import com.google.gson.Gson;
 import forms.FilmsForm;
 import forms.TableChangeForm;
 
 import javax.swing.*;
-import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
+
 
 public class AdminPanel extends JFrame implements ActionListener {
 
@@ -22,9 +23,13 @@ public class AdminPanel extends JFrame implements ActionListener {
     JTable filmsTable;
     JButton schedule, addFilm, deleteFilm, createSession;
 
+    FilmsForm filmsForm;
+
     FilmsTableModel ftm = new FilmsTableModel();
 
-    AdminPanel(){
+    ArrayList<Film> filmsFormList;
+
+    public AdminPanel(){
         Conn = ClientConnection.instance;
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -32,7 +37,7 @@ public class AdminPanel extends JFrame implements ActionListener {
         this.setTitle("Фильмы");
         this.setLocationRelativeTo(null);
         this.setLayout(null);
-        FilmsForm filmsForm = new FilmsForm();
+        filmsForm = new FilmsForm();
 
         gson = new Gson();
         String json = gson.toJson(filmsForm);
@@ -43,7 +48,7 @@ public class AdminPanel extends JFrame implements ActionListener {
 
         String line = Conn.receiveFromServer();
         filmsForm = gson.fromJson(line, FilmsForm.class);
-        ArrayList<Film> filmsFormList = filmsForm.films;
+        filmsFormList = filmsForm.films;
 
 
         for (int i = 0; i < filmsFormList.size(); i++) {
@@ -128,7 +133,7 @@ public class AdminPanel extends JFrame implements ActionListener {
             this.dispose();
         }
         if ((event.getSource() == schedule) && (filmsTable.getSelectedRow() != -1)){
-            SessionsAdminFrame sessionsAdminFrame = new SessionsAdminFrame(Integer.parseInt(filmsTable.getValueAt(filmsTable.getSelectedRow(), 0).toString()), filmsTable.getValueAt(filmsTable.getSelectedRow(), 1).toString());
+            SessionsAdminFrame sessionsAdminFrame = new SessionsAdminFrame(new Film(filmsFormList.get(filmsTable.getSelectedRow()).getFilm_id(), filmsFormList.get(filmsTable.getSelectedRow()).getTitle(), filmsFormList.get(filmsTable.getSelectedRow()).getDuration()));
             this.dispose();
         }
     }

@@ -1,15 +1,13 @@
-package Client;
+package Client.AdminFramePanels.TableModels;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
-import java.util.Arrays;
 
-public class FilmsTableModel extends AbstractTableModel {
-
-    private int columnCount = 6;
+public class SessionsTableModel extends AbstractTableModel {
+    private int columnCount = 3;
     private ArrayList<String []> dataArrayList;
 
-    public FilmsTableModel() {
+    public SessionsTableModel() {
         dataArrayList = new ArrayList<String []>();
         for (int i = 0; i < dataArrayList.size(); i++){
             dataArrayList.add(new String[getColumnCount()]);
@@ -29,12 +27,9 @@ public class FilmsTableModel extends AbstractTableModel {
     @Override
     public String getColumnName(int columnIndex){
         switch (columnIndex){
-            case 0: return "ID";
-            case 1: return "Название";
-            case 2: return "Длительность";
-            case 3: return "Жанр";
-            case 4: return "Год";
-            case 5: return "Страна";
+            case 0: return "Дата";
+            case 1: return "Время начала";
+            case 2: return "Зал";
         }
         return "";
     }

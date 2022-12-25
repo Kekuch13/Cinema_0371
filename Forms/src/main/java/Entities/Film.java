@@ -28,6 +28,12 @@ public class Film {
         this.country = country;
     }
 
+    public Film(int film_id, String title, int duration) {
+        this.film_id = film_id;
+        this.title = title;
+        this.duration = duration;
+    }
+
     public int getFilm_id() {
         return film_id;
     }

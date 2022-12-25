@@ -1,5 +1,6 @@
-package Client;
+package Client.AdminFramePanels;
 
+import Client.ClientConnection;
 import Entities.Film;
 import Entities.Session;
 import com.google.gson.Gson;
@@ -28,7 +29,7 @@ public class AddingSessionDialog extends JDialog implements ActionListener {
 
     int film_idOfAddedSession;
 
-    AddingSessionDialog(String filmTitle, int film_id) throws ParseException {
+    public AddingSessionDialog(String filmTitle, int film_id) throws ParseException {
         film_idOfAddedSession = film_id;
         this.setSize(500, 400);
         this.setTitle("Добавление");
