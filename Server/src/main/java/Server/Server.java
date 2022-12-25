@@ -79,6 +79,9 @@ public class Server {
                 case "CreateSession":
                     createSession(line);
                     break;
+                case "DeleteSession":
+                    deleteSession(line);
+                    break;
                 case "exit":
                     System.out.println("Closing connection");
                     try {
@@ -163,11 +166,17 @@ public class Server {
     public void sessionsList(String line) {
         SessionsForm sessionsForm = gson.fromJson(line, SessionsForm.class);
         ArrayList<Session> sessionsList = new ArrayList<Session>();
+        ArrayList<String> hallsList = new ArrayList<String>();
         try {
             Connection conn = DatabaseManager.getInstance().getConnection();
             Statement st = conn.createStatement();
 
-            String query = "select * from sessions where film_id = " + String.valueOf(sessionsForm.getFilm_id());
+            String query =
+                    "select date, time, sessions.hall_id, sessions.film_id, duration, name AS hall_name\n" +
+                    "from sessions\n" +
+                    "    inner join films f on f.film_id = sessions.film_id\n" +
+                    "    inner join halls h on h.hall_id = sessions.hall_id\n" +
+                    "where f.film_id = " + String.valueOf(sessionsForm.getFilm_id());
             ResultSet rs = st.executeQuery(query);
             while(rs.next()) {
                 Date date = rs.getDate("date");
@@ -175,11 +184,19 @@ public class Server {
                 int hall_id = rs.getInt("hall_id");
                 Session session = new Session(date, time, hall_id, sessionsForm.getFilm_id());
                 sessionsList.add(session);
+
+                int duration = rs.getInt("duration");
+                sessionsForm.setDuration(duration);
+
+                String hall_name = rs.getString("hall_name");
+                hallsList.add(hall_name);
             }
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         sessionsForm.setSessions(sessionsList);
+        sessionsForm.setHall_name(hallsList);
         String json = gson.toJson(sessionsForm);
         sendToClient(json);
     }
@@ -273,7 +290,32 @@ public class Server {
             Statement st = conn.createStatement();
 
             Session addedSession = createSessionForm.getSession();
-            String query = "INSERT INTO sessions VALUES ('" + addedSession.getDate() + "', '" + addedSession.getTime() + "', '" + addedSession.getHall_id() + "', '" + addedSession.getFilm_id() + "')";
+            String query = "INSERT INTO sessions VALUES ('" + addedSession.getDate() + "', '" + addedSession.getTime() + "', '" + addedSession.getHall_id() + "', '" + addedSession.getFilm_id() + "');\n";
+            query += "INSERT INTO tickets (seat_id, date, time, hall_id)\n";
+            query += "select seat_id, date, time, s.hall_id\n" +
+                    "from sessions inner join seats s on sessions.hall_id = s.hall_id\n" +
+                    "where sessions.hall_id = " + addedSession.getHall_id() + " and sessions.date = '" + addedSession.getDate() + "' and sessions.time = '" + addedSession.getTime() + "';\n";
+            System.out.println(query);
+
+            int rs = st.executeUpdate(query);
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void deleteSession(String line){
+        DeleteSessionForm deleteSessionForm = gson.fromJson(line, DeleteSessionForm.class);
+
+        try {
+            Connection conn = DatabaseManager.getInstance().getConnection();
+            Statement st = conn.createStatement();
+
+            Date date = deleteSessionForm.getDate();
+            Time time = deleteSessionForm.getTime();
+            int hall_id = deleteSessionForm.getHall_id();
+
+            String query = "DELETE from sessions WHERE date = '" + date + "' and time = '" + time + "' and hall_id = '" + hall_id + "';\n";
             System.out.println(query);
 
             int rs = st.executeUpdate(query);
