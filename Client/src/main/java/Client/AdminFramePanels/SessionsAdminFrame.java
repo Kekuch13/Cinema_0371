@@ -1,18 +1,18 @@
-package Client;
+package Client.AdminFramePanels;
 
+import Client.AdminFramePanels.TableModels.SessionsTableModel;
+import Client.AdminPanel;
+import Client.ClientConnection;
 import Entities.Film;
 import Entities.Session;
 import com.google.gson.Gson;
 import forms.DeleteSessionForm;
-import forms.FilmsForm;
 import forms.SessionsForm;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Date;
-import java.sql.Time;
 import java.util.ArrayList;
 
 public class SessionsAdminFrame extends JFrame implements ActionListener {
@@ -22,26 +22,25 @@ public class SessionsAdminFrame extends JFrame implements ActionListener {
     JTable sessionsTable;
     SessionsTableModel stm = new SessionsTableModel();
 
-    int deletedSessionFilm_id;
-    String deletedSessionFilmTitle;
+    Film deletedSessionFilm;
     JLabel titleLabel, durLabel;
     JButton backward, deleteBtn;
 
-    SessionsAdminFrame(int film_id, String filmTitle) {
-        deletedSessionFilm_id = film_id;
-        deletedSessionFilmTitle = filmTitle;
+    public SessionsAdminFrame(Film film) {
+        deletedSessionFilm = film;
 
         Conn = ClientConnection.instance;
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         this.setSize(800, 600);
-        this.setTitle("Сеансы: " + filmTitle);
+        this.setTitle("Сеансы: " + film.getTitle());
         this.setLocationRelativeTo(null);
         this.setLayout(null);
         SessionsForm sessionsForm = new SessionsForm();
 
         gson = new Gson();
-        sessionsForm.setFilm_id(film_id);
+        sessionsForm.setFilm_id(film.getFilm_id());
+        sessionsForm.setDuration(film.getDuration());
         String json = gson.toJson(sessionsForm);
         Conn.sendToServer(json);
 
@@ -62,7 +61,7 @@ public class SessionsAdminFrame extends JFrame implements ActionListener {
 
         this.add(sessionsTableScrollPage);
 
-        titleLabel = new JLabel("Фильм: " + filmTitle);
+        titleLabel = new JLabel("Фильм: " + film.getTitle());
         titleLabel.setBounds(20, 20, 250, 40);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
         titleLabel.setForeground(Color.black);
@@ -113,7 +112,7 @@ public class SessionsAdminFrame extends JFrame implements ActionListener {
             Conn = ClientConnection.instance;
             String json = gson.toJson(deleteSessionForm);
             Conn.sendToServer(json);
-            SessionsAdminFrame sessionsAdminFrame = new SessionsAdminFrame(deletedSessionFilm_id, deletedSessionFilmTitle);
+            SessionsAdminFrame sessionsAdminFrame = new SessionsAdminFrame(deletedSessionFilm);
             this.dispose();
         }
     }

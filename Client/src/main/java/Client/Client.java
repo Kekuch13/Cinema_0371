@@ -6,8 +6,8 @@ public class Client {
         ClientConnection Conn = ClientConnection.getInstance();
         //UserFrame h = new UserFrame();
 
-        //SignInFrame frame = new SignInFrame();
+        SignInFrame frame = new SignInFrame();
 
-        AdminPanel adminframe = new AdminPanel();
+        //AdminPanel adminframe = new AdminPanel();
     }
 }
