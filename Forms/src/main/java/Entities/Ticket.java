@@ -60,7 +60,7 @@ public class Ticket {
         this.hall_id = hall_id;
     }
 
-    public boolean isIs_sold() {
+    public boolean is_sold() {
         return is_sold;
     }
 

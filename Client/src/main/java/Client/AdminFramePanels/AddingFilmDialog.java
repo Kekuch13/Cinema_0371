@@ -1,5 +1,7 @@
-package Client;
+package Client.AdminFramePanels;
 
+import Client.AdminPanel;
+import Client.ClientConnection;
 import Entities.Film;
 import com.google.gson.Gson;
 import forms.AuthenticationForm;
@@ -19,7 +21,7 @@ public class AddingFilmDialog extends JDialog implements ActionListener {
     JFormattedTextField year;
     JTextField title, genre, country, duration;
     JButton addingBtn, resetBtn, cancel;
-    AddingFilmDialog() throws ParseException {
+    public AddingFilmDialog() throws ParseException {
         this.setSize(500, 500);
         this.setTitle("Добавление");
         this.setLocationRelativeTo(null);

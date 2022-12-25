@@ -53,6 +53,8 @@ public class Session {
 
     @Override
     public String toString() {
-        return "Дата:" + date + "\n Время" + time;
+        String HTML_1 = "<html><body style='text-align: center'><h3>";
+        String HTML_2 = "</h3></body></html>";
+        return HTML_1 + "Дата: " + date + "<br>Время: " + time + HTML_2;
     }
 }
