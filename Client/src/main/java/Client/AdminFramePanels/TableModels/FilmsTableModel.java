@@ -1,4 +1,4 @@
-package Client;
+package Client.AdminFramePanels.TableModels;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;

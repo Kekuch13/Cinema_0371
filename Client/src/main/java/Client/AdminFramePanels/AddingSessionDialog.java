@@ -1,5 +1,6 @@
-package Client;
+package Client.AdminFramePanels;
 
+import Client.ClientConnection;
 import Entities.Film;
 import Entities.Session;
 import com.google.gson.Gson;
@@ -28,7 +29,7 @@ public class AddingSessionDialog extends JDialog implements ActionListener {
 
     int film_idOfAddedSession;
 
-    AddingSessionDialog(String filmTitle, int film_id) throws ParseException {
+    public AddingSessionDialog(String filmTitle, int film_id) throws ParseException {
         film_idOfAddedSession = film_id;
         this.setSize(500, 400);
         this.setTitle("Добавление");
@@ -115,7 +116,7 @@ public class AddingSessionDialog extends JDialog implements ActionListener {
                 msg.setText("Некорректная дата");
             } else if (timeField.getText().contains(" ")){
                 msg.setText("Некорректное время");
-            } else if (!hallField.getText().matches("[-+]?\\d+") || hallField.getText().equals("") || (Integer.parseInt(hallField.getText()) > 2) || (Integer.parseInt(hallField.getText()) < 1)){ //todo количество залов будет больше
+            } else if (!hallField.getText().matches("[-+]?\\d+") || hallField.getText().equals("") || (Integer.parseInt(hallField.getText()) > 4) || (Integer.parseInt(hallField.getText()) < 1)){ //todo количество залов будет больше
                 msg.setText("Некорректный зал");
             } else {
                 SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
@@ -137,9 +138,7 @@ public class AddingSessionDialog extends JDialog implements ActionListener {
                 String json = gson.toJson(createSessionForm);
                 Conn.sendToServer(json);
 
-                AdminPanel adminframe = new AdminPanel();
                 this.dispose();
-
             }
         }
         if (evt.getSource() == resetBtn) {
