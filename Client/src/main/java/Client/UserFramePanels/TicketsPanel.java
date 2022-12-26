@@ -12,11 +12,11 @@ import java.util.Map;
 
 public class TicketsPanel extends JPanel {
     public JButton back, save;
-    public Map<JButton, Ticket> ticketsBtns = new LinkedHashMap<JButton, Ticket>();
-    public ArrayList<Integer> selected = new ArrayList<Integer>();
-    Film film;
-    Session session;
-    JLabel film_title, session_title, screen;
+    private Map<JButton, Ticket> ticketsBtns = new LinkedHashMap<JButton, Ticket>();
+    private ArrayList<Integer> selected = new ArrayList<Integer>();
+    private Film film;
+    private Session session;
+    private JLabel film_title, session_title, screen;
 
 
     public TicketsPanel() {
@@ -60,7 +60,7 @@ public class TicketsPanel extends JPanel {
         film_title.setFont(new Font("Arial", Font.BOLD, 20));
 
         session_title = new JLabel("", SwingConstants.CENTER);
-        session_title.setBounds(250, 40, 300, 40);
+        session_title.setBounds(0, 40, 800, 40);
         session_title.setFont(new Font("Arial", Font.BOLD, 20));
 
         back = new JButton("Назад");
@@ -101,7 +101,7 @@ public class TicketsPanel extends JPanel {
             else pair.getKey().setBackground(new Color(65, 65, 255));
             idx++;
         }
-        session_title.setText(tickets.get(0).getDate() + "     " + tickets.get(0).getTime());
+        session_title.setText("Дата: " + tickets.get(0).getDate() + "       Время: " + tickets.get(0).getTime());
     }
 
     public Film getFilm() {
@@ -111,5 +111,9 @@ public class TicketsPanel extends JPanel {
     public void setFilm(Film film) {
         this.film = film;
         film_title.setText(film.getTitle() + " (" + film.getDuration() + " мин)");
+    }
+
+    public ArrayList<Integer> getSelected() {
+        return selected;
     }
 }

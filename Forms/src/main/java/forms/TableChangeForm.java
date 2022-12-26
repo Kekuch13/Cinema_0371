@@ -3,12 +3,10 @@ package forms;
 import Entities.Film;
 
 public class TableChangeForm {
-    final String form = "ChangeTable";
-    public String action;
-    public int[] rowIndex;
-
-    public Film film;
-
+    private final String form = "ChangeTable";
+    private String action;
+    private int[] rowIndex;
+    private Film film;
 
     public TableChangeForm(String action, int[] rowIndex) {
         this.action = action;
@@ -38,5 +36,13 @@ public class TableChangeForm {
 
     public void setRowIndex(int[] rowIndex) {
         this.rowIndex = rowIndex;
+    }
+
+    public Film getFilm() {
+        return film;
+    }
+
+    public void setFilm(Film film) {
+        this.film = film;
     }
 }

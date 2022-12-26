@@ -5,9 +5,9 @@ import Entities.Film;
 import java.util.ArrayList;
 
 public class FilmsForm {
-    final String form = "FilmsList";
+    private final String form = "FilmsList";
 
-    public ArrayList<Film> films;
+    private ArrayList<Film> films;
 
     public FilmsForm() {
     }

@@ -14,11 +14,11 @@ import java.awt.event.ActionListener;
 import java.text.ParseException;
 
 public class AddingFilmDialog extends JDialog implements ActionListener {
-    ClientConnection Conn;
-    JLabel labelTitle, labelGenre, labelCountry, labelYear, labelDuration, msg;
-    JFormattedTextField year;
-    JTextField title, genre, country, duration;
-    JButton addingBtn, resetBtn, cancel;
+    private ClientConnection Conn;
+    private JLabel labelTitle, labelGenre, labelCountry, labelYear, labelDuration, msg;
+    private JFormattedTextField year;
+    private JTextField title, genre, country, duration;
+    private JButton addingBtn, resetBtn, cancel;
     private Gson gson;
 
     public AddingFilmDialog() throws ParseException {
@@ -142,13 +142,12 @@ public class AddingFilmDialog extends JDialog implements ActionListener {
                 TableChangeForm tableChangeForm = new TableChangeForm("add", addedFilm);
 
                 gson = new Gson();
-                Conn = ClientConnection.instance;
+                Conn = ClientConnection.getInstance();
                 String json = gson.toJson(tableChangeForm);
                 Conn.sendToServer(json);
 
                 AdminPanel adminframe = new AdminPanel();
                 this.dispose();
-
             }
         }
         if (evt.getSource() == cancel) {

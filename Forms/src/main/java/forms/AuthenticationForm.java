@@ -1,10 +1,10 @@
 package forms;
 
 public class AuthenticationForm {
-    final String form = "authentication";
-    public String login;
-    public String password;
-    public boolean isValid;
+    private final String form = "authentication";
+    private String login;
+    private String password;
+    private boolean isValid;
 
     public String role;
 

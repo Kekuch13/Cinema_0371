@@ -25,7 +25,7 @@ public class SignInFrame extends JFrame implements ActionListener {
 
     SignInFrame() {
         gson = new Gson();
-        Conn = ClientConnection.instance;
+        Conn = ClientConnection.getInstance();
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         this.setSize(800, 600);
@@ -111,7 +111,7 @@ public class SignInFrame extends JFrame implements ActionListener {
             authForm = gson.fromJson(line, AuthenticationForm.class);
 
             String msg;
-            if (authForm.isValid) {
+            if (authForm.isValid()) {
                 if (Objects.equals(authForm.getRole(), "USER")) {
                     UserFrame userFrame = new UserFrame();
                 } else {

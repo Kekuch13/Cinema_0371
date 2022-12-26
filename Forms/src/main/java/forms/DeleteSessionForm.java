@@ -4,11 +4,11 @@ import java.sql.Date;
 import java.sql.Time;
 
 public class DeleteSessionForm {
-    final String form = "DeleteSession";
+    private final String form = "DeleteSession";
 
-    public Date date;
-    public Time time;
-    public int hall_id;
+    private Date date;
+    private Time time;
+    private int hall_id;
 
     public DeleteSessionForm() {
     }
