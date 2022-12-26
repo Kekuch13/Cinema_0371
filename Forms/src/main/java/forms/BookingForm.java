@@ -3,8 +3,8 @@ package forms;
 import java.util.ArrayList;
 
 public class BookingForm {
-    final String form = "booking";
-    ArrayList<Integer> tickets_ids;
+    private final String form = "booking";
+    private ArrayList<Integer> tickets_ids;
 
     public BookingForm(ArrayList<Integer> tickets_ids) {
         this.tickets_ids = tickets_ids;

@@ -1,8 +1,6 @@
 package Client;
 
-import Client.AdminFramePanels.AddingFilmDialog;
-import Client.AdminFramePanels.AddingSessionDialog;
-import Client.AdminFramePanels.SessionsAdminFrame;
+import Client.AdminFramePanels.*;
 import Client.AdminFramePanels.TableModels.FilmsTableModel;
 import Entities.Film;
 import com.google.gson.Gson;
@@ -28,7 +26,7 @@ public class AdminPanel extends JFrame implements ActionListener {
     private final Gson gson;
 
     public AdminPanel() {
-        Conn = ClientConnection.instance;
+        Conn = ClientConnection.getInstance();
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         this.setSize(800, 600);
@@ -46,7 +44,7 @@ public class AdminPanel extends JFrame implements ActionListener {
 
         String line = Conn.receiveFromServer();
         filmsForm = gson.fromJson(line, FilmsForm.class);
-        filmsFormList = filmsForm.films;
+        filmsFormList = filmsForm.getFilms();
 
 
         for (int i = 0; i < filmsFormList.size(); i++) {

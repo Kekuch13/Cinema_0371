@@ -7,11 +7,10 @@ import java.sql.Time;
 import java.util.ArrayList;
 
 public class TicketsForm {
-    final String form = "tickets";
-    public Date date;
-    public Time time;
-    public int hall_id;
-
+    private final String form = "tickets";
+    private Date date;
+    private Time time;
+    private int hall_id;
     public ArrayList<Ticket> tickets;
 
     public TicketsForm(Date date, Time time, int hall_id, ArrayList<Ticket> tickets) {

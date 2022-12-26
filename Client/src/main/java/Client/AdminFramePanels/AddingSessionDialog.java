@@ -16,12 +16,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 public class AddingSessionDialog extends JDialog implements ActionListener {
-    ClientConnection Conn;
-    JLabel labelTitle, labelDate, labelTime, labelHall, msg;
-    JFormattedTextField dateField, timeField;
-    JTextField hallField;
-    JButton addingBtn, resetBtn;
-    int film_idOfAddedSession;
+    private ClientConnection Conn;
+    private JLabel labelTitle, labelDate, labelTime, labelHall, msg;
+    private JFormattedTextField dateField, timeField;
+    private JTextField hallField;
+    private JButton addingBtn, resetBtn;
+    private int film_idOfAddedSession;
     private Gson gson;
 
     public AddingSessionDialog(String filmTitle, int film_id) throws ParseException {
@@ -128,7 +128,7 @@ public class AddingSessionDialog extends JDialog implements ActionListener {
                 CreateSessionForm createSessionForm = new CreateSessionForm(addedSession);
 
                 gson = new Gson();
-                Conn = ClientConnection.instance;
+                Conn = ClientConnection.getInstance();
                 String json = gson.toJson(createSessionForm);
                 Conn.sendToServer(json);
 

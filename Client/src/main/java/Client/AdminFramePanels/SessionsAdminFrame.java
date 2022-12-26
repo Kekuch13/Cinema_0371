@@ -16,18 +16,18 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class SessionsAdminFrame extends JFrame implements ActionListener {
-    ClientConnection Conn;
-    JTable sessionsTable;
-    SessionsTableModel stm = new SessionsTableModel();
-    Film deletedSessionFilm;
-    JLabel titleLabel, durLabel;
-    JButton backward, deleteBtn;
+    private ClientConnection Conn;
+    private JTable sessionsTable;
+    private SessionsTableModel stm = new SessionsTableModel();
+    private Film deletedSessionFilm;
+    private JLabel titleLabel, durLabel;
+    private JButton backward, deleteBtn;
     private Gson gson;
 
     public SessionsAdminFrame(Film film) {
         deletedSessionFilm = film;
 
-        Conn = ClientConnection.instance;
+        Conn = ClientConnection.getInstance();
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         this.setSize(800, 600);
@@ -47,7 +47,7 @@ public class SessionsAdminFrame extends JFrame implements ActionListener {
 
         String line = Conn.receiveFromServer();
         sessionsForm = gson.fromJson(line, SessionsForm.class);
-        ArrayList<Session> sessionsFormList = sessionsForm.sessions;
+        ArrayList<Session> sessionsFormList = sessionsForm.getSessions();
 
         int duration = sessionsForm.getDuration();
         for (int i = 0; i < sessionsFormList.size(); i++) {
@@ -107,7 +107,6 @@ public class SessionsAdminFrame extends JFrame implements ActionListener {
                     Integer.parseInt(hall.substring(0, hall.indexOf(':')))
             );
             gson = new Gson();
-            Conn = ClientConnection.instance;
             String json = gson.toJson(deleteSessionForm);
             Conn.sendToServer(json);
             SessionsAdminFrame sessionsAdminFrame = new SessionsAdminFrame(deletedSessionFilm);

@@ -5,12 +5,11 @@ import Entities.Session;
 import java.util.ArrayList;
 
 public class SessionsForm {
-    final String form = "sessions";
-    public int film_id;
-
-    public ArrayList<String> hall_name;
-    public int duration;
-    public ArrayList<Session> sessions;
+    private final String form = "sessions";
+    private int film_id;
+    private ArrayList<String> hall_name;
+    private int duration;
+    private ArrayList<Session> sessions;
 
     public SessionsForm(int film_id, ArrayList<Session> sessions) {
         this.film_id = film_id;

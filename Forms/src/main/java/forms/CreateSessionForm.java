@@ -3,9 +3,9 @@ package forms;
 import Entities.Session;
 
 public class CreateSessionForm {
-    final String form = "CreateSession";
+    private final String form = "CreateSession";
 
-    public Session session;
+    private Session session;
 
     public CreateSessionForm() {
     }

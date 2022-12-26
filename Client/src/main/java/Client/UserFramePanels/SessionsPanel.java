@@ -9,8 +9,8 @@ import java.awt.*;
 public class SessionsPanel extends JPanel {
     public JList<Session> sessionList;
     public DefaultListModel<Session> sessionModel = new DefaultListModel<>();
-    public JLabel film_title;
     public JButton back;
+    private JLabel film_title;
     private Film film;
 
     public SessionsPanel() {

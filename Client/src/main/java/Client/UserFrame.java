@@ -23,7 +23,7 @@ public class UserFrame extends JFrame {
     private CardLayout cl = new CardLayout();
 
     public UserFrame() {
-        Conn = ClientConnection.instance;
+        Conn = ClientConnection.getInstance();
 
         mainPanel = new JPanel();
         mainPanel.setSize(800, 600);
@@ -35,8 +35,8 @@ public class UserFrame extends JFrame {
 
         filmsPanel = new FilmsPanel();
         FilmsForm filmsForm = getFilmsForm();
-        for (int i = 0; i < filmsForm.films.size(); ++i) {
-            filmsPanel.filmsModel.addElement(filmsForm.films.get(i));
+        for (int i = 0; i < filmsForm.getFilms().size(); ++i) {
+            filmsPanel.filmsModel.addElement(filmsForm.getFilms().get(i));
         }
         filmsPanel.filmList.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
@@ -46,8 +46,8 @@ public class UserFrame extends JFrame {
 
                     sessionsPanel.sessionModel.removeAllElements();
                     SessionsForm sessionsForm = getSessionsForm(film);
-                    for (int i = 0; i < sessionsForm.sessions.size(); ++i) {
-                        sessionsPanel.sessionModel.addElement(sessionsForm.sessions.get(i));
+                    for (int i = 0; i < sessionsForm.getSessions().size(); ++i) {
+                        sessionsPanel.sessionModel.addElement(sessionsForm.getSessions().get(i));
                     }
                     cl.show(mainPanel, "2");
                 }
@@ -79,8 +79,8 @@ public class UserFrame extends JFrame {
         });
         ticketsPanel.save.addActionListener(e -> {
             int op = JOptionPane.showConfirmDialog(ticketsPanel, "Вы уверены?", "Подтверждение", JOptionPane.YES_NO_OPTION);
-            if(op == 0 && !ticketsPanel.selected.isEmpty()) {
-                bookTickets(ticketsPanel.selected);
+            if(op == 0 && !ticketsPanel.getSelected().isEmpty()) {
+                bookTickets(ticketsPanel.getSelected());
                 cl.show(mainPanel, "1");
                 int idx = filmsPanel.filmList.getSelectedIndex();
                 filmsPanel.filmList.removeSelectionInterval(idx, idx);

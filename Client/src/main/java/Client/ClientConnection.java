@@ -7,7 +7,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class ClientConnection {
-    public static ClientConnection instance;
+    private static ClientConnection instance;
     private static DataOutputStream dataOutputStream;
     private static DataInputStream dataInputStream;
     private Socket socket;
@@ -26,7 +26,7 @@ public class ClientConnection {
         }
     }
 
-    public static ClientConnection getInstance() {
+    public static synchronized ClientConnection getInstance() {
         if (instance == null) {
             instance = new ClientConnection("localhost", 6666);
         }

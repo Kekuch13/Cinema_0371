@@ -47,6 +47,10 @@ public class Server {
         }
     }
 
+    public void setDatabaseManager(DatabaseManager databaseManager) {
+        this.databaseManager = databaseManager;
+    }
+
     public void run() {
         String line;
         while (true) {
@@ -99,7 +103,7 @@ public class Server {
         }
     }
 
-    public String receiveFromClient() {
+    private String receiveFromClient() {
         String line = "";
         try {
             line = dataInputStream.readUTF();
@@ -110,7 +114,7 @@ public class Server {
         return line;
     }
 
-    public void sendToClient(String line) {
+    private void sendToClient(String line) {
         try {
             dataOutputStream.writeUTF(line);
             dataOutputStream.flush();
@@ -120,7 +124,7 @@ public class Server {
         }
     }
 
-    public void authentication(String line) {
+    private void authentication(String line) {
         AuthenticationForm auth = gson.fromJson(line, AuthenticationForm.class);
         try {
             Connection conn = DatabaseManager.getInstance().getConnection();
@@ -140,7 +144,7 @@ public class Server {
         sendToClient(json);
     }
 
-    public void filmsList(String line) {
+    private void filmsList(String line) {
         FilmsForm films = gson.fromJson(line, FilmsForm.class);
         ArrayList<Film> filmsList = new ArrayList<Film>();
         try {
@@ -167,7 +171,7 @@ public class Server {
         sendToClient(json);
     }
 
-    public void sessionsList(String line) {
+    private void sessionsList(String line) {
         SessionsForm sessionsForm = gson.fromJson(line, SessionsForm.class);
         ArrayList<Session> sessionsList = new ArrayList<Session>();
         ArrayList<String> hallsList = new ArrayList<String>();
@@ -205,7 +209,7 @@ public class Server {
         sendToClient(json);
     }
 
-    public void ticketsList(String line) {
+    private void ticketsList(String line) {
         TicketsForm ticketsForm = gson.fromJson(line, TicketsForm.class);
         ArrayList<Ticket> ticketsList = new ArrayList<Ticket>();
         try {
@@ -253,12 +257,12 @@ public class Server {
 
     private void changeTable(String line) {
         TableChangeForm tableChangeForm = gson.fromJson(line, TableChangeForm.class);
-        if (Objects.equals(tableChangeForm.action, "delete")) {
+        if (Objects.equals(tableChangeForm.getAction(), "delete")) {
             try {
                 Connection conn = DatabaseManager.getInstance().getConnection();
                 Statement st = conn.createStatement();
 
-                char[] arrayOfId = Arrays.toString(tableChangeForm.rowIndex).toCharArray();
+                char[] arrayOfId = Arrays.toString(tableChangeForm.getRowIndex()).toCharArray();
                 arrayOfId[0] = '(';
                 arrayOfId[arrayOfId.length - 1] = ')';
                 String query = "DELETE FROM films WHERE film_id IN " + String.valueOf(arrayOfId);
@@ -268,11 +272,11 @@ public class Server {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-        } else if (Objects.equals(tableChangeForm.action, "add")) {
+        } else if (Objects.equals(tableChangeForm.getAction(), "add")) {
             try {
                 Connection conn = DatabaseManager.getInstance().getConnection();
                 Statement st = conn.createStatement();
-                Film film = tableChangeForm.film;
+                Film film = tableChangeForm.getFilm();
 
                 String query = "INSERT INTO films VALUES (default, '" + film.getTitle() + "', '" + film.getYear() + "', '" + film.getGenre() + "', '" + film.getDuration() + "', '" + film.getCountry() + "')";
 
@@ -305,7 +309,7 @@ public class Server {
         }
     }
 
-    public void deleteSession(String line) {
+    private void deleteSession(String line) {
         DeleteSessionForm deleteSessionForm = gson.fromJson(line, DeleteSessionForm.class);
 
         try {
@@ -323,9 +327,5 @@ public class Server {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public void setDatabaseManager(DatabaseManager databaseManager) {
-        this.databaseManager = databaseManager;
     }
 }
